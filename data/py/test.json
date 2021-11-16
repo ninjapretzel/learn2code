@@ -1,0 +1,31 @@
+{
+	"Content":{
+		"Category": "Blah",
+		"Lesson": "Test",
+		"LessonText": "Just like make it return expected and print \"expected console output\" my dude.",
+		"DocLinks": [""]
+	},
+	
+	"Preamble": "def nope(val):\n\t",
+	"InitialCode": "# Edit me!",
+	"TestCases": [
+		{ 
+			"args": ["args", "value", "or", "array"], 
+			"expectReturnValue": true,
+			"expected": "expectedReturn", 
+			"expectConsoleOutput": true,
+			"expectedConsole": "expected console output" 
+		},
+			
+		{ 
+			"args": "argstringlol", 
+			"expectReturnValue": true,
+			"expected": "expectedReturn", 
+			"expectConsoleOutput": true,
+			"expectedConsole": "expected console output" 
+		}
+			
+	],
+	"TestCode": "result = nope(args)",
+	".":"."
+}

@@ -1,0 +1,50 @@
+.hidden {
+	display: none;	
+}
+textarea {
+  font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+  resize: none;
+}
+.tiny {
+	height: 200px;
+}
+.teensy {
+	height: 30px !important;
+}
+
+.card {
+	margin: 0;
+}
+.tight {
+	margin: 3px !important;
+	border: 0px !important;
+	border-bottom: 1px !important;
+}
+ul.tight {
+	padding: 0;
+}
+.smallerText { 
+	font-size: .80em;
+}
+.rowfix {
+	margin-bottom: 0;
+}
+.loader {
+	height: 199px;
+}
+.collapsible-header {
+	padding:0px !important;
+	display:block !important;
+}
+.collapsible-body {
+	padding:0px !important;
+	margin:0px !important;
+}
+pre { 
+	margin-top: 0px; 
+	margin-bottom: 0px; 
+}
+
+test {
+	padding: 0px !important;
+}
