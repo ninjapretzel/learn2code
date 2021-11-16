@@ -1,35 +1,17 @@
-import {jsInfo} from "./jsVm.js";
-import {pyInfo} from "./pyVm.js";
-import * as vm from "./vm.js";
-
+import {jsInfo} from "./src/jsVm.js";
+import {pyInfo} from "./src/pyVm.js";
+import * as vm from "./src/vm.js";
+import { urlParam } from "./src/pageUtils.js";
+import { Lesson } from "./src/lesson.js";
 let codeEditor = undefined;
+
 const queryParams = urlParam();
 const LANG = queryParams["lang"] || "js";
 const PY = LANG === "py";
 const JS = LANG === "js";
 
 
-let lesson = {
-	Content: {
-		Category: "Untitled Category",
-		Lesson: "Untitled Lesson",
-		LessonText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-	},
-	
-	Preamble: "function placeholder(a,b,c) {",
-	InitialCode: "\n\t// Edit Me!\n",
-	Postamble: "}",
-	TestCases: [
-		{ 
-			args: ["args", "value", "or", "array"], 
-			expectReturnValue: true,
-			expected: "expectedReturn", 
-			expectConsoleOutput: true,
-			expectedConsole: "expected console output" 
-		},
-	],
-	TestCode: "placeholder(args[0], args[1], args[2]);",
-}
+let lesson = new Lesson();
 
 
 let langInfo = {
@@ -250,14 +232,3 @@ $(document).ready(async ()=>{
 	}, 100);
 	
 });
-
-
-function urlParam() {
-	const result = {};
-	const items =  location.search.substr(1).split("&");
-	for (let i = 0; i < items.length; i++) {
-		const split = items[i].split("=");
-		result[split[0].toLowerCase()] = decodeURIComponent(split[1]).toLowerCase();
-	}
-	return result;
-}
