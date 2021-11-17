@@ -46,26 +46,16 @@ loadLanguage();
 // inputs & Timings of inputs
 // eg be able to replay a student's attempt
 // what they typed, where (cursor position), and how long they paused 
+// - Can hook into `on("change", function(codeMirror, change){})` to read changes
+
 // When they ran code
+// - record state of entry whenever `exec()` is run
 
-// Different languages:
-// Python Interpreter in JS
-// 
-
-// Image drawing version
-
+// Image drawing plugin
+// - time to build a plugin system!
 
 // Interface:
 //  Doc links embedded in each lesson
-
-async function fetchJson(path) { 
-	const headers = new Headers();
-	headers.append('pragma', 'no-cache');
-	headers.append('cache-control', 'no-cache');
-	const req = new Request(path);
-	const res = await fetch(req, headers);
-	return await res.json();
-}
 
 let results = []
 
@@ -211,6 +201,7 @@ $(document).ready(async ()=>{
 	if (lesson.Postamble) { endMarker.line += 1; endMarker.ch+=1; }
 	
 	$("#run").click(()=>{ exec(); });
+	
 	setTimeout(()=>{
 		codeEditor = CodeMirror(document.getElementById("scriptEntry"), {
 			value: jsToLoad,
@@ -223,6 +214,18 @@ $(document).ready(async ()=>{
 			electricChars: false, // ??? No idea what that does. 
 			lineNumbers: true,
 		})
+		codeEditor.on("change", function(editor,change) {
+			//console.log("editor=",editor);
+			//console.log("change=",change);
+		});
+		
+		$("#scriptEntry").keypress(function(e) {
+			const evt = e.originalEvent
+			const key = evt.key;
+			const ctrl = evt.ctrlKey;
+			// TODO: Keybind system?
+			if (key === "Enter" && ctrl) { exec(); }
+		});
 		
 		setTimeout(()=>{
 			if (lesson.Preamble) {
