@@ -1,11 +1,56 @@
 /// File holding generic (language-agnostic) virtual machine functionality.
-
+import { Lesson, TestCase } from "./lesson.js";
 
 let delay = 1;
 let running = false;
 let runId = 0;
 let runTask = null;
 const INTERRUPTED = "INTERRUPTED";
+
+/**
+ * @callback execFn Function to execute code in some given virtual machine
+ * @param {string} code Code to execute 
+ * @param {Map<string, any} injected namespace to inject 
+ * @return {Promise<any>} promise representing execution */
+
+/**
+ * @callback extractFn Function to extract the return value of the execution
+ * @return {any} value returned from execution */
+
+/** 
+ * @callback argsFormatterFn Function to format args in assignment statement for language
+ * @param {any} args Args to format
+ * @returns {string} args formatted in string, in format for the given language */
+
+/** Class holding information about a language's VM*/
+export class VmInfo {
+	/** @type {string} syntax highlighting mode name */
+	mode = "javascript"
+	/** @type {boolean} true when the VM is ready to be used, false otherwise.  */
+	ready = true
+	/** @type {execFn} Code execution function */
+	exec = async function(code, injected) { }
+	/** @type {extractFn} Return value extraction function */
+	extract = async function() { return undefined }
+	/** @type {argsFormatterFn} Function that processes args for the language */
+	argsFormatter = function(args) { return "const args = " + JSON.stringify(args); }
+}
+
+/** Class holding the results of execution of a single `TestCase` */
+export class ExecutionResult {
+	/** @type {number} Elapsed time to run in ms */
+	elapsedMS = 0
+	/** @type {any} value returned from execution */
+	returnVal = undefined
+	/** @type {string} console output from execution */
+	consoleOutput = ""
+	/** @type {boolean} did the return value match the expected return value? */
+	matchedReturnValue = true
+	/** @type {boolean} did the console output  match the expected console output? */
+	matchedConsoleOutput = true
+	/** @type {TestCase} Source Test Case */
+	testCase = null
+}
 
 /** Type for simulating console output */
 export function SimConsole() {
@@ -29,6 +74,11 @@ export const injectedFunctions = {
 	println: simConsole.println
 }
 
+/** Internal exection function 
+ * @param {string} script user code to execute
+ * @param {Lesson} lesson lesson to execute
+ * @param {VmInfo} langInfo language specific VM information
+ * @returns {ExecutionResult[]} Results of execution of all of the `TestCase`s in the `Lesson` */
 export async function execInternal(script, lesson, langInfo) {
 	const results = [];
 	running = true;
@@ -36,12 +86,12 @@ export async function execInternal(script, lesson, langInfo) {
 	
 	const testCode = lesson.TestCode;
 	for (let i = 0; i < lesson.TestCases.length; i++) {
-		const test = lesson.TestCases[i];
+		const testCase = lesson.TestCases[i];
 		
-		const args = test.args;
-		const expectExact = test.expectExact;
-		const expected = test.expected;
-		const expectedConsole = test.expectedConsole;
+		const args = testCase.args;
+		const expectExact = testCase.expectExact;
+		const expected = testCase.expected;
+		const expectedConsole = testCase.expectedConsole
 		
 		const code = script 
 			+ "\n" + langInfo.argsFormatter(args)
@@ -74,7 +124,7 @@ export async function execInternal(script, lesson, langInfo) {
 			
 		const matchedConsoleOutput = !expectedConsole || simConsole.buffer === expectedConsole;
 		
-		const res = { elapsedMS, returnVal, consoleOutput, matchedReturnValue, matchedConsoleOutput }
+		const res = { elapsedMS, returnVal, consoleOutput, matchedReturnValue, matchedConsoleOutput, testCase }
 		// console.log(res);
 		results[i] = res;
 	}

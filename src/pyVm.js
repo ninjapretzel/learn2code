@@ -1,3 +1,6 @@
+import { VmInfo } from "./vm.js";
+
+/** @type {VmInfo} */
 export const pyInfo = {
 	mode: "python",	
 	ready:false,
@@ -5,6 +8,7 @@ export const pyInfo = {
 	extract,
 	argsFormatter,
 }
+export default pyInfo;
 
 export function argsFormatter(args) {
 	return "args = " + JSON.stringify(args);	

@@ -1,3 +1,6 @@
+import { VmInfo } from "./vm.js";
+
+/** @type {VmInfo} */
 export const jsInfo = {
 	mode: "javascript",
 	ready: true,
@@ -5,6 +8,7 @@ export const jsInfo = {
 	extract,
 	argsFormatter,
 }
+export default jsInfo;
 
 export function argsFormatter(args) {
 	return "const args = " + JSON.stringify(args);	

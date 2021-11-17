@@ -1,5 +1,3 @@
-import {jsInfo} from "./src/jsVm.js";
-import {pyInfo} from "./src/pyVm.js";
 import * as vm from "./src/vm.js";
 import { urlParam } from "./src/pageUtils.js";
 import { Lesson } from "./src/lesson.js";
@@ -26,14 +24,23 @@ async function exec() {
 	results = await vm.execInternal(script, lesson, langInfo);
 	rerenderTestCases();
 }
-if (JS) {
-	langInfo = jsInfo;
-} else if (PY) {
-	langInfo = pyInfo;
-} else {
-	console.warn("No valid language set- defaulting to javascript.");
-	langInfo = jsInfo;
+async function loadLanguage() {
+	console.log("loading lang="+LANG);
+	if (JS) {
+		console.log("Importing js");
+		langInfo = await import("./src/jsVm.js");
+	} else if (PY) {
+		console.log("Importing py");;
+		langInfo = await import("./src/pyVm.js");
+	} else {
+		console.warn("No valid language set- defaulting to javascript.");
+		langInfo = await import("./src/jsVm.js");
+	}
+	if (langInfo.default) {
+		langInfo = langInfo.default
+	}
 }
+loadLanguage();
 
 // Collect information:
 // inputs & Timings of inputs
@@ -188,11 +195,10 @@ $(document).ready(async ()=>{
 	if (!localStorage) { upgradeBrowser(); return; }
 	let jsToLoad = "";
 	
-	// let res = await fetchJson(`data/${LANG}/${LESSON_ID}.json`);
-	let res = await fetchJson(`data/${LANG}/test.json`);
-	
-	if (res) { lesson = res; showLesson(); }
+	let res = await import(`./data/${LANG}/test.js`);
+	if (res) { lesson = res.default ?? res; showLesson(); }
 	else { failedToLoad(); return; }
+	if (!lesson || !lesson.TestCases) { failedToLoad(); return; }
 	
 	const startMarker = { line: -1, ch:-1 }
 	if (lesson.Preamble) { jsToLoad += lesson.Preamble; }
