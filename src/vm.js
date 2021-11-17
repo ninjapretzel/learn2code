@@ -22,6 +22,12 @@ const INTERRUPTED = "INTERRUPTED";
  * @param {any} args Args to format
  * @returns {string} args formatted in string, in format for the given language */
 
+/** 
+ * @callback errorHandlerFn
+ * @param {CodeMirror} scriptEntry code editor object
+ * @param {any[]} errors Errors from execution (dependent on language's vm)
+ * @return {any} nothing is expected, but side effect should be editor is highlighted to show errors to the student */
+
 /** Class holding information about a language's VM*/
 export class VmInfo {
 	/** @type {string} syntax highlighting mode name */
@@ -34,6 +40,8 @@ export class VmInfo {
 	extract = async function() { return undefined }
 	/** @type {argsFormatterFn} Function that processes args for the language */
 	argsFormatter = function(args) { return "const args = " + JSON.stringify(args); }
+	/** @type {errorHandlerFn} Function that processes errors for the language. */
+	onError = function(scriptEntry, errors) { }
 }
 
 /** Class holding the results of execution of a single `TestCase` */

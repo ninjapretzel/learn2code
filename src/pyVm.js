@@ -36,4 +36,9 @@ export async function extract() {
 	return pyodide.globals.get("result");
 }
 
+export async function onError(scriptEntry, errors) {
+	
+}
+
 const loader = load();
+

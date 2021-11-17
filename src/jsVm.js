@@ -7,6 +7,7 @@ export const jsInfo = {
 	exec,
 	extract,
 	argsFormatter,
+	onError,
 }
 export default jsInfo;
 
@@ -22,3 +23,6 @@ export async function extract() {
 	return await runTask;	
 }
 
+export async function onError(scriptEntry, errors) {
+	
+}
