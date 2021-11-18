@@ -3,13 +3,14 @@ import { manifest, languages } from "./data/manifest.js";
 
 export const AllLessons = {};
 export const Categories = {};
-export let READY = false;
+export const BrowseLoader = loadAllLessons();
+export const Loaded = await BrowseLoader;
 
 async function loadAllLessons() {
 
 	let total = 0;
 	
-	const prev = {};
+	const prev = {}
 	const ord = {}
 	
 	for (let lang of languages) { AllLessons[lang] = {}; ord[lang] = 0; }
@@ -41,14 +42,8 @@ async function loadAllLessons() {
 			}
 		}
 	}
-	READY = true;
 	console.log("loaded",total,"lessons");
 	console.log("all lessons = ", AllLessons);
 	console.log("categories = ", Categories);
+	return true;
 }
-loadAllLessons();
-
-
-$(document).ready(function() {
-	
-});
