@@ -30,7 +30,7 @@ export async function exec(code, injectedFunctions) {
 	for (let name in injectedFunctions) {
 		pyodide.globals.set(name, injectedFunctions[name]);
 	}
-	pyodide.runPython(code);	
+	pyodide.runPython(code);
 }
 export async function extract() {
 	return pyodide.globals.get("result");
@@ -40,5 +40,5 @@ export async function onError(scriptEntry, errors) {
 	
 }
 
-const loader = load();
+await load();
 
