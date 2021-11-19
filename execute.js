@@ -52,6 +52,14 @@ function rerenderTestCases() {
 	$("#output").empty();
 	renderTestCases();
 }
+
+let markers = [];
+
+function clearMarkers() {
+	for (let mark of markers) { mark.clear(); }
+	markers = []	
+}
+
 export function showLesson(l) {
 	if (l) { lesson = l }
 	
@@ -73,7 +81,14 @@ export function showLesson(l) {
 	const endMarker = measure(codeToLoad); 
 	if (lesson.Postamble) { endMarker.line += 1; endMarker.ch+=1; }
 	
+	clearMarkers();
 	codeEditor.setValue(codeToLoad);
+	if (lesson.Preamble) { 
+		codeEditor.markText(startMarker, endOfPreamble, { inclusiveLeft: true, readOnly: true});
+	}
+	if (lesson.Postamble) {
+		codeEditor.markText(startOfPostamble, endMarker, { inclusiveRight: true, readOnly: true});
+	}
 	
 	rerenderTestCases();
 }
@@ -205,7 +220,7 @@ const CodeMirrorLoader = new Promise( (resolve, reject)=>{
 		});
 		
 		resolve(true);
-	}, 100);
+	}, 1);
 	
 });
 
