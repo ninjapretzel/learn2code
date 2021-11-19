@@ -76,11 +76,12 @@ export async function pause(ms) { await wait(ms); }
 
 /** Reference to simulated console */
 export const simConsole = new SimConsole();
-/** Reference to functions that are injected on each run */
-export const injectedFunctions = {
+/** Reference to namespace that is injected every run */
+export const injected = {
 	print: simConsole.print,
-	println: simConsole.println
-}
+	println: simConsole.println,
+	console: { log: simConsole.println },
+};
 
 /** Internal exection function 
  * @param {string} script user code to execute
@@ -111,7 +112,7 @@ export async function execInternal(script, lesson, langInfo) {
 		const start = new Date().getTime();
 		let result = null;
 		try {
-			runTask = langInfo.exec(code, injectedFunctions);
+			runTask = langInfo.exec(code, injected);
 			await runTask;
 			returnVal = result = await langInfo.extract();
 			//M.toast({html: "Run Finished.", classes:"green", displayLength: 2000  } );
