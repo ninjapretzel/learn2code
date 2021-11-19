@@ -2,7 +2,7 @@ import * as vm from "./src/vm.js";
 import { Lesson } from "./src/lesson.js";
 import { AllLessons, Categories } from "./browse.js"
 import { showExec, showLesson } from "./execute.js"
-import { show } from "./common.js"
+import { render, show } from "./common.js"
 
 // Collect information:
 // inputs & Timings of inputs
@@ -19,19 +19,20 @@ import { show } from "./common.js"
 // Interface:
 //  Doc links embedded in each lesson
 
-
 $(document).ready(async ()=>{
 	// TODO: Move to a featureCheck() function?
 	if (!localStorage) { show("upgrade"); return; }
 	if (!crypto) { show("upgrade"); return; }
 	
-	await import("./browse.js");
-	await import("./execute.js");
-	
 	try { $('.tooltipped').tooltip(); } catch (e) { console.warn(e); }
 	try { $('.collapsible').collapsible( {accordion: false} ); } catch (e) { console.warn(e); }
 	
 	// show("exec");
-	showExec();
+	await showExec();
 	showLesson(Categories["Intro"]["js"][0]);
+	
+	// Okay, I really don't know why this kind of...
+	// hybrid jquery-and-babel-had-a-baby-in-the-browser monster
+	// isn't the _default_ approach to modern web development...
+	// render("#hello", <span>sup baby!??</span>)
 });

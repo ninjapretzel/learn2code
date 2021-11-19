@@ -15,3 +15,10 @@ export function measure(str) {
 	}
 	return {line,ch};
 }
+
+export function render(where, what) {
+	const query = $(where);
+	if (query && query[0]) {
+		ReactDOM.render( what, query[0]	);
+	}
+}
