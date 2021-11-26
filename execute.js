@@ -168,7 +168,7 @@ export let renderTestCases = function() {
 		header.append("<pre>args="+JSON.stringify(test.args)+"</pre>");
 		output.append(element);
 		
-		if (wasFailure) {
+		if (wasFailure || lesson.AlwaysOpen) {
 			console.log(i, "was failure");
 			$('.collapsible').collapsible('open', i-1);
 		}

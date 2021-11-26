@@ -29,5 +29,6 @@ export const testLesson = {
 			
 	],
 	TestCode: "nope(args);",
+	AlwaysOpen: true,
 }
 export default testLesson;

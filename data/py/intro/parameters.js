@@ -26,4 +26,5 @@ export default {
 		},
 	],
 	TestCode: "result = hello(args);",
+	AlwaysOpen: true,
 }

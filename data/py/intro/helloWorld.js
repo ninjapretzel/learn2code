@@ -21,5 +21,6 @@ export default {
 			expectedConsole: "Hello, World!" 
 		},	
 	],
-	TestCode: "result = hello()"
+	TestCode: "result = hello()",
+	AlwaysOpen: true, 
 }
