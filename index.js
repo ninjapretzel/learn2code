@@ -31,9 +31,10 @@ $(document).ready(async ()=>{
 	await showExec();
 	showLesson(Categories["Intro"]["js"][0]);
 	
-	render("#hello", "Test", {});
+	
 	// Okay, I really don't know why this kind of...
 	// hybrid jquery-and-babel-had-a-baby-in-the-browser monster
 	// isn't the _default_ approach to modern web development...
-	// render("#hello", <span>sup baby!??</span>)
+	// render("#hello", "Test", {});
+	
 });
