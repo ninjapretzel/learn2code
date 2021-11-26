@@ -16,8 +16,11 @@ export function measure(str) {
 	return {line,ch};
 }
 
-export function render(where, what) {
+export function render(where, what, data) {
 	const query = $(where);
+	if (TEMPLATES && TEMPLATES[what]) {
+		what = TEMPLATES[what].draw(data);	
+	}
 	if (query && query[0]) {
 		ReactDOM.render( what, query[0]	);
 	}
