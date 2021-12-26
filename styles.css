@@ -51,3 +51,7 @@ pre {
 test {
 	padding: 0px !important;
 }
+
+.success { background-color: #81c784 !important; }
+.failure { background-color: #E57373 !important;}
+.neutral { background-color: #90a4ae !important; }

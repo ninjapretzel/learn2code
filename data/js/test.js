@@ -15,14 +15,14 @@ export const testLesson = {
 		{ 
 			args: ["args", "value", "or", "array"], 
 			expectReturnValue: true,
-			expected: "expectedReturn", 
+			expectedReturnValue: "expectedReturn", 
 			expectConsoleOutput: true,
 			expectedConsole: "expected console output" 
 		},
 		{ 
 			args: "argstringlol", 
-			expected: "expectedReturn", 
 			expectReturnValue: true,
+			expectedReturnValue: "expectedReturn", 
 			expectConsoleOutput: true,
 			expectedConsole: "expected console output" 
 		}

@@ -1,6 +1,13 @@
+function newliner(text) {
+	return text.split("\n").map((value, index) => {
+		return (<span idx={index}>{value}<br /></span>)
+	});
+}
+
 class Execute extends Template {
 	draw(data) {
-		const { Category, LessonText, Lesson } = data.Content;
+		let { Category, LessonText, Lesson } = data.Content;
+		LessonText = newliner(LessonText)
 		return <div className="col s12 row rowfix">
 			<div className="col s12 row rowfix">
 				<div className="col s2"></div>

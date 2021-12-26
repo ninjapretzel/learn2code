@@ -95,26 +95,41 @@ export async function execInternal(script, lesson, langInfo) {
 	
 	const testCode = lesson.TestCode;
 	for (let i = 0; i < lesson.TestCases.length; i++) {
-		const testCase = lesson.TestCases[i];
+		const test = lesson.TestCases[i];
 		
-		const args = testCase.args;
-		const expectExact = testCase.expectExact;
-		const expected = testCase.expected;
-		const expectedConsole = testCase.expectedConsole
+		const args = test.args;
+		const expected = {};
+		const injected = {};
+		
+		//const expectExact = testCase.expectExact;
+		//const expected = testCase.expected;
+		//const expectedConsole = testCase.expectedConsole
+		
 		
 		const code = script 
 			+ "\n" + langInfo.argsFormatter(args)
 			+ "\n" + testCode;
 		
 		// console.log(`executing:\n--------------\n${code}\n---------------\n`);
-		let returnVal = undefined;
-		simConsole.clear();
+		let returned = undefined;
 		const start = new Date().getTime();
+		const res = { run:true, test, index:i}
+		
+		for (let id in PLUGINS) {
+			expected[id] = test["expect" + id] ? true : false;
+			//console.log("Expecting:",id,test["expect"+id])
+			if (expected[id]) {
+				//console.log("pre: expecting", id, "on test", i);
+				PLUGINS[id].preRun(test, injected, res);
+				res["expect"+id] = true;
+			}
+		}
+		
 		let result = null;
 		try {
 			runTask = langInfo.exec(code, injected);
 			await runTask;
-			returnVal = result = await langInfo.extract();
+			returned = result = await langInfo.extract();
 			//M.toast({html: "Run Finished.", classes:"green", displayLength: 2000  } );
 		} catch (e) {
 			if (e === INTERRUPTED) {
@@ -125,16 +140,37 @@ export async function execInternal(script, lesson, langInfo) {
 			}
 		}
 		const end = new Date().getTime();
+		
 		const consoleOutput = simConsole.buffer;
 		const elapsedMS = end-start;
-		const matchedReturnValue = expectExact 
-			? result === expected
-			: (!expected || result === expected);
-			
-		const matchedConsoleOutput = !expectedConsole || simConsole.buffer === expectedConsole;
+		//const matchedReturnValue = expectExact 
+		//	? result === expected
+		//	: (!expected || result === expected);
+		res.elapsedMS = elapsedMS;
+		res.returned = returned;
 		
-		const res = { elapsedMS, returnVal, consoleOutput, matchedReturnValue, matchedConsoleOutput, testCase }
+		for (let id in PLUGINS) {
+			const plugin = PLUGINS[id];
+			if (expected[id]) {
+				res[id] = plugin.extract(result);
+				plugin.postRun(test, injected, res);
+				
+				res["matched"+id] = plugin.check(test["expected"+id], res[id]);
+			}
+			
+		}
+			
+		// const matchedConsoleOutput = !expectedConsole || simConsole.buffer === expectedConsole;
+		
+		// const res = { 
+		// 	elapsedMS, returnVal,
+		// 	consoleOutput, 
+		// 	matchedReturnValue, 
+		// 	matchedConsoleOutput, 
+		// 	testCase: test 
+		// }
 		// console.log(res);
+		
 		results[i] = res;
 	}
 	return results;

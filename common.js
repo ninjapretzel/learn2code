@@ -27,10 +27,34 @@ export function measure(str) {
 	return {line,ch};
 }
 
+function processData(data, seen) {
+	if (!seen) { seen=[]; }
+	const result = Array.isArray(data) ? [] : {};
+	for (let key in data) {
+		if (seen.indexOf(data[key]) >= 0) { continue; }
+		seen[seen.length] = data[key];
+		if (typeof(data[key]) === "string") {
+			if (data[key].includes("\n")) {
+				result[key] = data[key].replace(/(?:\r\n|\r|\n)/g, "<br />")
+			} else {
+				result[key] = data[key];
+			}
+		} else if (typeof(data[key]) === "object") {
+			result[key] = processData(data[key], seen);	
+		} else {
+			result[key] == data[key];	
+		}
+	}
+	return result;
+}
+
 export function render(where, what, data) {
 	const query = $(where);
 	if (TEMPLATES && TEMPLATES[what]) {
-		what = TEMPLATES[what].draw(data);	
+		what = TEMPLATES[what].draw(data);
+	} else {
+		if (TEMPLATES) { console.warn("Could not find template", what); }
+		else { console.error("TEMPLATES constant is falsey!"); }	
 	}
 	let rendered = null;
 	if (query && query[0]) {
@@ -39,19 +63,25 @@ export function render(where, what, data) {
 	}
 	return rendered;
 }
+
 export function appendRender(where, what, data) {
 	const query = $(where);
+	console.log("append with data",data);
 	if (TEMPLATES && TEMPLATES[what]) {
-		what = TEMPLATES[what].draw(data);	
+		what = TEMPLATES[what].draw(data);
+	} else {
+		if (TEMPLATES) { console.warn("Could not find template", what); }
+		else { console.error("TEMPLATES constant is falsey!"); }	
 	}
 	let rendered = null;
 	if (query && query[0]) {
 		const temp = $("#temp")
 		rendered = ReactDOM.render(what, temp[0]);
+		ReactDOM.unmountComponentAtNode($("#temp")[0]);
 		$("#temp").empty();
 		query.append($(rendered));
 	}
-	return rendered();
+	return rendered;
 }
 
 export function delay(ms) {

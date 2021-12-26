@@ -1,4 +1,4 @@
-import { queryParams, measure, show, render, delay, expandCollapsible } from "./common.js"
+import { queryParams, measure, show, render, delay, expandCollapsible, appendRender } from "./common.js"
 import { Lesson } from "./src/lesson.js"
 import * as vm from "./src/vm.js"
 
@@ -101,14 +101,22 @@ export let renderTestCases = async function() {
 		}
 		return 0;
 	}
-	const passFailColors = [ "blue-grey", "green", "red" ];
+	// Todo: load these from `localStorage.config` for colorblindness...
+	const passFailClasses = [ "blue-grey", "green", "red" ];
+	// const passFailClasses = [ "neutral", "success", "failure" ];
 	
 	const output = $("#output");
 	let i = 0;
+	
 	console.log("rendering tests in",lesson.TestCases);
 	for (let test of lesson.TestCases) {
 		// render(TEMPLATES["TestResultCard"], )
 		const result = results[i++];
+		let wasFailure = false;
+		appendRender("#output", "TestResultCard", result || {run:false,test,index:i});
+		
+		
+		
 		const element = $("<li>");
 		const header = $("<div>");
 		header.addClass("collapsible-header card blue-grey test");
@@ -118,7 +126,6 @@ export let renderTestCases = async function() {
 		body.addClass("collapsible-body card row blue-grey test");
 		element.append(header);
 		element.append(body);
-		let wasFailure = false;
 		
 		if (test.expectReturnValue) {
 			const chip = $("<div>keyboard_return</div>");
@@ -132,7 +139,7 @@ export let renderTestCases = async function() {
 			}
 			const div = $("<div>");
 			div.addClass("col s12 card test");
-			const color = passFailColors[passFail(result, "matchedReturnValue")] 
+			const color = passFailClasses[passFail(result, "matchedReturnValue")] 
 			div.addClass(color);
 			chip.addClass(color);
 			div.append($("<pre>"+text+"</pre>"));
@@ -146,7 +153,7 @@ export let renderTestCases = async function() {
 			
 			const div = $("<div>");
 			div.addClass("col s12 card test");
-			const color = passFailColors[passFail(result, "matchedConsoleOutput")];
+			const color = passFailClasses[passFail(result, "matchedConsoleOutput")];
 			div.addClass(color);
 			chip.addClass(color);
 			
@@ -154,11 +161,11 @@ export let renderTestCases = async function() {
 			div.append("<pre>"+test.expectedConsole+"</pre>");
 			if (result) {
 				if (!result.matchedConsoleOutput) { wasFailure = true; }
-				if (result.consoleOutput.length == 0) { 
+				if (result.ConsoleOutput.length == 0) { 
 					div.append("<span>Got: </span><pre>(nothing)</pre>");	
 					
 				} else {
-					div.append("<span>Got:</span><pre>"+result.consoleOutput+"</pre>");	
+					div.append("<span>Got:</span><pre>"+result.ConsoleOutput+"</pre>");	
 				}
 			} else {
 				div.append("<span>Not run yet</span><pre>...</pre>");
@@ -168,8 +175,9 @@ export let renderTestCases = async function() {
 		}
 		header.append("<pre>args="+JSON.stringify(test.args)+"</pre>");
 		output.append(element);
-		await(delay(1));
-		if (wasFailure || lesson.AlwaysOpen) {
+		
+		await delay(10);
+		if (lesson.AlwaysOpen) {
 			console.log(i, "was failure");
 			expandCollapsible(true, i-1);
 		}

@@ -36,7 +36,8 @@ $(document).ready(async ()=>{
 	// show("exec");
 	// await showExec();
 	// await(delay(20));
-	showLesson(Categories["Intro"]["js"][1]);
+	showLesson(Categories["Intro"]["js"][0]);
+	// showLesson(Categories["Intro"]["js"][1]);
 	
 	//await showBrowse();
 	

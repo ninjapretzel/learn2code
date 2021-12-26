@@ -5,7 +5,8 @@ export default {
 	Content: {
 		Category: "Intro",
 		Lesson: "Parameters", 	
-		LessonText: "This time, your function will take in a parameter and say hello to it.",
+		LessonText: "This time, your function will take in a parameter and say hello to it."
+		+"\nHint: use string literals like \"Hello\" or \'Hello\' and add them to the parameter",
 		DocLinks: [""]
 	},
 	Preamble: "function hello(thing) {",
@@ -16,14 +17,51 @@ export default {
 			args: "a", 
 			expectReturnValue: false,
 			expectConsoleOutput: true,
-			expectedConsole: "Hello, a!" 
+			expectedConsoleOutput: "Hello, a!" 
 		},
 		{ 
-			args: "b", 
+			args: "bob", 
 			expectReturnValue: false,
 			expectConsoleOutput: true,
-			expectedConsole: "Hello, b!" 
+			expectedConsoleOutput: "Hello, bob!" 
 		},
+		{ 
+			args: "Bob", 
+			expectReturnValue: false,
+			expectConsoleOutput: true,
+			expectedConsoleOutput: "Hello, Bob!" 
+		},
+		{ 
+			args: "George", 
+			expectReturnValue: false,
+			expectConsoleOutput: true,
+			expectedConsoleOutput: "Hello, George!" 
+		},
+		{ 
+			args: "George", 
+			expectReturnValue: false,
+			expectConsoleOutput: true,
+			expectedConsoleOutput: "Hello, George!" 
+		},
+		{ 
+			args: "George", 
+			expectReturnValue: false,
+			expectConsoleOutput: true,
+			expectedConsoleOutput: "Hello, George!" 
+		},
+		{ 
+			args: "George", 
+			expectReturnValue: false,
+			expectConsoleOutput: true,
+			expectedConsoleOutput: "Hello, George!" 
+		},
+		{ 
+			args: "George", 
+			expectReturnValue: false,
+			expectConsoleOutput: true,
+			expectedConsoleOutput: "Hello, George!" 
+		},
+		
 	],
 	TestCode: "hello(args);",
 	AlwaysOpen: true,
