@@ -14,10 +14,6 @@
 	
 	<!-- Jquery -->
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-	<!-- Materialize -->
-	<link rel="stylesheet" href="lib/materialize.min.css" />
-	<script src="lib/materialize.min.js"></script>
-	<link href="lib/material-icons.css" rel="stylesheet">
 	
 	<!-- CodeMirror, To have a nice functional code editor on page. -->
 	<link rel="stylesheet" href="lib/codemirror.css" />
@@ -34,6 +30,10 @@
 	<!-- Python VM -->
 	<script src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js"></script>
 	
+	<!-- Materialize (leave at the end) -->
+	<link rel="stylesheet" href="lib/materialize.css" />
+	<script src="lib/materialize.js"></script>
+	<link href="lib/material-icons.css" rel="stylesheet">
 	<!-- Own resources. -->
 	<!-- Custom styles. -->
 	<link rel="stylesheet" href="styles.css" />
@@ -44,16 +44,12 @@
 	
 	<!-- Templates, TODO: Auto-generate this segment -->
 	<script type="text/babel" src="src/templates/test.js"></script>
+	<script type="text/babel" src="src/templates/execute.js"></script>
 	
 	<!-- Entry Point -->
 	<script type="text/babel" data-type="module" src="index.js"></script>
 	
-	<!-- <script type="text/babel" data-type="module">
-	//this is an async test
-	const lessonModule = await import("./src/lesson.js");
-	const x = <div></div>;
-	console.log(x, lessonModule);
-	</script> -->
+	
 	
 </head>
 <body class="brown darken-2 white-text">
@@ -80,16 +76,20 @@
 				Please check the path and try again.
 			</h1>
 		</div>
+		<div id="temp" class="page hidden col s12 row rowfix card blue-grey darken-3">
+		</div>
 		
 		<div id="browse" class="page hidden col s12 row rowfix card blue-grey darken-3">
 			<div class="main col s12 row rowfix">
 				<div class="col s12"><h2> Browse </h2></div>
-				<div class="col s12 row" id="categories"></div>
+				<div class="col s12 row" id="categories">
+					
+				</div>
 			</div>
 		</div>
 		
-		<div id="exec" class="page col s12 row rowfix card blue-grey darken-3">
-			<div class="col s12 row rowfix">
+		<div id="exec" class="page hidden col s12 row rowfix card blue-grey darken-3">
+			<!-- <div class="col s12 row rowfix">
 				<div class="col s2"></div>
 				<button id="prev" class="col blue-grey s4 teensy btn bb waves-effect"> &lt;-- Prev</button>
 				<button id="next" class="col blue-grey s4 teensy btn bb waves-effect">Next --&gt; </button>
@@ -110,7 +110,7 @@
 			<div class="col s6 card large blue-grey darken-2">
 				<h5> Test Cases & Output : </h5>
 				<ul id="output" class="black-text collapsible expandable"></ul>
-			</div>
+			</div> -->
 		</div>
 	</div>
 	

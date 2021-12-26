@@ -1,4 +1,4 @@
-import { queryParams, measure, show  } from "./common.js"
+import { queryParams, measure, show, render, delay, expandCollapsible } from "./common.js"
 import { Lesson } from "./src/lesson.js"
 import * as vm from "./src/vm.js"
 
@@ -60,7 +60,7 @@ function clearMarkers() {
 	markers = []	
 }
 
-export function showLesson(l) {
+export async function showLesson(l) {
 	if (l) { lesson = l }
 	
 	for (let x in lesson.Content) {
@@ -81,6 +81,7 @@ export function showLesson(l) {
 	const endMarker = measure(codeToLoad); 
 	if (lesson.Postamble) { endMarker.line += 1; endMarker.ch+=1; }
 	
+	await showExec();
 	clearMarkers();
 	codeEditor.setValue(codeToLoad);
 	if (lesson.Preamble) { 
@@ -89,11 +90,10 @@ export function showLesson(l) {
 	if (lesson.Postamble) {
 		codeEditor.markText(startOfPostamble, endMarker, { inclusiveRight: true, readOnly: true});
 	}
-	
 	rerenderTestCases();
 }
 
-export let renderTestCases = function() {
+export let renderTestCases = async function() {
 	function passFail(result, key) {
 		if (result) {
 			if (result[key]) { return 1; }
@@ -107,6 +107,7 @@ export let renderTestCases = function() {
 	let i = 0;
 	console.log("rendering tests in",lesson.TestCases);
 	for (let test of lesson.TestCases) {
+		// render(TEMPLATES["TestResultCard"], )
 		const result = results[i++];
 		const element = $("<li>");
 		const header = $("<div>");
@@ -167,10 +168,10 @@ export let renderTestCases = function() {
 		}
 		header.append("<pre>args="+JSON.stringify(test.args)+"</pre>");
 		output.append(element);
-		
+		await(delay(1));
 		if (wasFailure || lesson.AlwaysOpen) {
 			console.log(i, "was failure");
-			$('.collapsible').collapsible('open', i-1);
+			expandCollapsible(true, i-1);
 		}
 			
 		
@@ -180,47 +181,48 @@ export let renderTestCases = function() {
 let firstTime = true;
 export async function showExec() {
 	show("exec");
-	if (firstTime) {
-		await CodeMirrorLoader;
-			
-	}
+	render("#exec", "Execute", lesson);
+	$("#scriptEntry")
+	await delay(20);
+	await LoadCodeMirror();
 	
-		
 }
 
-const CodeMirrorLoader = new Promise( (resolve, reject)=>{
+// const CodeMirrorLoader = LoadCodeMirror();
+function LoadCodeMirror() { 
+	return new Promise( (resolve, reject)=>{
 	
-	$("#run").click(()=>{ exec(); });
-	setTimeout( ()=>{ 
-		// Delay another 1 ms, 
-		// for some reason the TextArea isn't always ready in some browsers...
-		codeEditor = CodeMirror(document.getElementById("scriptEntry"), {
-			value: codeToLoad,
-			mode: langInfo.mode,	
-			theme: "solarized dark",
-			indentUnit: 4,
-			smartIndent: true,
-			tabSize: 4,
-			indentWithTabs: true,
-			electricChars: false, // ??? No idea what that does. 
-			lineNumbers: true,
-		});
+		$("#run").click(()=>{ exec(); });
+		setTimeout( ()=>{ 
+			// Delay another 1 ms, 
+			// for some reason the TextArea isn't always ready in some browsers...
+			codeEditor = CodeMirror($("#scriptEntry")[0], {
+				value: codeToLoad,
+				mode: langInfo.mode,	
+				theme: "solarized dark",
+				indentUnit: 4,
+				smartIndent: true,
+				tabSize: 4,
+				indentWithTabs: true,
+				electricChars: false, // ??? No idea what that does. 
+				lineNumbers: true,
+			});
+			
+			codeEditor.on("change", function(editor,change) {
+				//console.log("editor=",editor);
+				//console.log("change=",change);
+			});
+			
+			$("#scriptEntry").keypress(function(e) {
+				const evt = e.originalEvent
+				const key = evt.key;
+				const ctrl = evt.ctrlKey;
+				// TODO: Keybind system?
+				if (key === "Enter" && ctrl) { exec(); }
+			});
+			
+			resolve(true);
+		}, 2);
 		
-		codeEditor.on("change", function(editor,change) {
-			//console.log("editor=",editor);
-			//console.log("change=",change);
-		});
-		
-		$("#scriptEntry").keypress(function(e) {
-			const evt = e.originalEvent
-			const key = evt.key;
-			const ctrl = evt.ctrlKey;
-			// TODO: Keybind system?
-			if (key === "Enter" && ctrl) { exec(); }
-		});
-		
-		resolve(true);
-	}, 1);
-	
-});
-
+	});
+}

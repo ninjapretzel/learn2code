@@ -5,6 +5,6 @@ export const languages = [ "js", "py", ]
 
 export const manifest = [
 	"intro/helloWorld",
-	"test",
+	"intro/parameters",
 ]
 

@@ -1,8 +1,8 @@
 import * as vm from "./src/vm.js";
 import { Lesson } from "./src/lesson.js";
-import { AllLessons, Categories } from "./browse.js"
+import { AllLessons, Categories, showBrowse } from "./browse.js"
 import { showExec, showLesson } from "./execute.js"
-import { render, show } from "./common.js"
+import { GLOBALS, render, appendRender, show, delay } from "./common.js"
 
 // Collect information:
 // inputs & Timings of inputs
@@ -19,22 +19,46 @@ import { render, show } from "./common.js"
 // Interface:
 //  Doc links embedded in each lesson
 
+
 $(document).ready(async ()=>{
 	// TODO: Move to a featureCheck() function?
 	if (!localStorage) { show("upgrade"); return; }
 	if (!crypto) { show("upgrade"); return; }
 	
+	// initTooltip();
 	try { $('.tooltipped').tooltip(); } catch (e) { console.warn(e); }
+	// initTooltip( M.Tooltip.getInstance(document.querySelectorAll('.tooltipped')) );
+	//initCollapsible();
 	try { $('.collapsible').collapsible( {accordion: false} ); } catch (e) { console.warn(e); }
+	// collapsible = M.Collapsible.getInstance(document.querySelector('.collapsible.expandable'));
+
 	
 	// show("exec");
-	await showExec();
-	showLesson(Categories["Intro"]["js"][0]);
+	// await showExec();
+	// await(delay(20));
+	showLesson(Categories["Intro"]["js"][1]);
 	
+	//await showBrowse();
 	
+	const test1 = <div> hi </div>
+	const test2 = <div className="red"> hi </div>
+	const test3 = <div> {test1} {test2} </div>
+	
+	// render("#hello", test3);
 	// Okay, I really don't know why this kind of...
 	// hybrid jquery-and-babel-had-a-baby-in-the-browser monster
 	// isn't the _default_ approach to modern web development...
-	// render("#hello", "Test", {});
+	// appendRender("#output", "TestResultCard", {
+	// 	index:3,
+	// 	test:{ 
+	// 		args: ["args", "value", "or", "array"], 
+	// 		expectReturnValue: true,
+	// 		expected: "expectedReturn", 
+	// 		expectConsoleOutput: true,
+	// 		expectedConsole: "expected console output" 
+	// 	},
+	// 	result: {}
+		
+	// });
 	
 });

@@ -1,10 +1,20 @@
 import { Lesson } from "./src/lesson.js";
 import { manifest, languages } from "./data/manifest.js";
+import { show } from "./common.js";
+import { showLesson } from "./execute.js";
 
 export const AllLessons = {};
 export const Categories = {};
 export const BrowseLoader = loadAllLessons();
 export const Loaded = await BrowseLoader;
+
+export async function showBrowse() {
+	await BrowseLoader;
+	show("browse");
+	$("#browse").click(()=>{
+		showLesson(Categories["Intro"]["js"][0]);
+	});
+}
 
 async function loadAllLessons() {
 
