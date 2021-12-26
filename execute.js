@@ -115,73 +115,10 @@ export let renderTestCases = async function() {
 		let wasFailure = false;
 		appendRender("#output", "TestResultCard", result || {run:false,test,index:i});
 		
-		
-		
-		const element = $("<li>");
-		const header = $("<div>");
-		header.addClass("collapsible-header card blue-grey test");
-		header.append("Test Case #"+i + " ");		
-		
-		const body = $("<div>");
-		body.addClass("collapsible-body card row blue-grey test");
-		element.append(header);
-		element.append(body);
-		
-		if (test.expectReturnValue) {
-			const chip = $("<div>keyboard_return</div>");
-			chip.addClass("right chip material-icons lighten-2");
-			let text = "Expecting result of " + JSON.stringify(test.expected);	
-			if (result) {
-				text += "\nGot " + JSON.stringify(result.returnVal);
-				if (!result.matchedReturnValue) { wasFailure = true; }
-			} else {
-				text += "\nNot run yet...";	
-			}
-			const div = $("<div>");
-			div.addClass("col s12 card test");
-			const color = passFailClasses[passFail(result, "matchedReturnValue")] 
-			div.addClass(color);
-			chip.addClass(color);
-			div.append($("<pre>"+text+"</pre>"));
-			body.append(div)
-			header.append(chip);
-		}
-		
-		if (test.expectConsoleOutput) {
-			const chip = $("<div>print</div>");
-			chip.addClass("right chip material-icons lighten-2");
-			
-			const div = $("<div>");
-			div.addClass("col s12 card test");
-			const color = passFailClasses[passFail(result, "matchedConsoleOutput")];
-			div.addClass(color);
-			chip.addClass(color);
-			
-			div.append("<span>Expected Console Output:</span>");
-			div.append("<pre>"+test.expectedConsole+"</pre>");
-			if (result) {
-				if (!result.matchedConsoleOutput) { wasFailure = true; }
-				if (result.ConsoleOutput.length == 0) { 
-					div.append("<span>Got: </span><pre>(nothing)</pre>");	
-					
-				} else {
-					div.append("<span>Got:</span><pre>"+result.ConsoleOutput+"</pre>");	
-				}
-			} else {
-				div.append("<span>Not run yet</span><pre>...</pre>");
-			}
-			body.append(div);
-			header.append(chip);
-		}
-		header.append("<pre>args="+JSON.stringify(test.args)+"</pre>");
-		output.append(element);
-		
-		await delay(10);
 		if (lesson.AlwaysOpen) {
 			console.log(i, "was failure");
 			expandCollapsible(true, i-1);
 		}
-			
 		
 	}
 }

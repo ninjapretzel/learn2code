@@ -9,6 +9,13 @@ function passFail(result, key) {
 	}
 	return 0;
 }
+function pretty(thing) {
+	let str = JSON.stringify(thing);
+	if (str === undefined) { str = "undefined"; }
+	if (str === null) { str = "null"; }
+	if (str === "") { str = "(Empty String)"; }	
+	return str;
+}
 class TestResultCard extends Template {
 	
 	draw(data) { // ExecutionResult
@@ -53,16 +60,16 @@ class TestResultCard extends Template {
 				insides.push(
 					<div className={"col s12 card test lighten-2 "+color}>
 						<span>Expected {id}: </span>
-						<pre>{test["expected"+id]}</pre>
+						<pre>{pretty(test["expected"+id])}</pre>
 						<span>Got:</span>
-						<pre>{result[id]}</pre>
+						<pre>{pretty(result[id])}</pre>
 					</div>
 				);
 			} else {
 				insides.push(
 					<div className={"col s12 card test lighten-2 "+color}>
 						<span>Expected {id}: </span>
-						<pre>{test["expected"+id]}</pre>
+						<pre>{pretty(test["expected"+id])}</pre>
 					</div>
 				);
 			}
@@ -71,11 +78,9 @@ class TestResultCard extends Template {
 		
 		cnt++;
 		// console.log("Test args are", test.args);
-		let argStr=JSON.stringify(test.args);
-		if (argStr === undefined) { argStr = "(No Arguments)"; }
-		if (argStr === null) { argStr = "null"; }
-		if (argStr === "") { argStr = "(Empty String)"; }
-		return <li key="{cnt}">
+		let argStr = pretty(test.args);
+		
+		return <li key={cnt.toString()}>
 			<div className="collapsible-header card blue-grey test">
 				{chips}
 				Test case #{index}

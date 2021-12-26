@@ -7,7 +7,9 @@ export default {
 		Lesson: "Hello World", 	
 		LessonText: "The first thing any programmer does is make their computer say"
 			+ "\n\"Hello, World!\"."
-			+ "\nUse the print(\"stuff\") function",
+			+ "\nUse the print(\"stuff\") function"
+			+ "\nalso, make it return 5... for testing purposes"
+		,
 		DocLinks: [""]
 	},
 	Preamble: "function hello() {",
@@ -17,7 +19,9 @@ export default {
 		{ 
 			args: undefined, 
 			expectConsoleOutput: true,
-			expectedConsoleOutput: "Hello, World!" 
+			expectedConsoleOutput: "Hello, World!",
+			expectReturnValue: true,
+			expectedReturnValue: 5, 
 		},	
 	],
 	TestCode: "hello();",

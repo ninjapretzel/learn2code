@@ -130,6 +130,7 @@ export async function execInternal(script, lesson, langInfo) {
 			runTask = langInfo.exec(code, injected);
 			await runTask;
 			returned = result = await langInfo.extract();
+			console.log("test", i, "returned", returned);
 			//M.toast({html: "Run Finished.", classes:"green", displayLength: 2000  } );
 		} catch (e) {
 			if (e === INTERRUPTED) {
@@ -148,11 +149,13 @@ export async function execInternal(script, lesson, langInfo) {
 		//	: (!expected || result === expected);
 		res.elapsedMS = elapsedMS;
 		res.returned = returned;
+		console.log("Before postRun: ", res);
 		
 		for (let id in PLUGINS) {
 			const plugin = PLUGINS[id];
 			if (expected[id]) {
-				res[id] = plugin.extract(result);
+				res[id] = plugin.extract(res);
+				console.log(id, "has", res[id]);
 				plugin.postRun(test, injected, res);
 				
 				res["matched"+id] = plugin.check(test["expected"+id], res[id]);
