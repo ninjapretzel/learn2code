@@ -80,7 +80,7 @@ class TestResultCard extends Template {
 		// console.log("Test args are", test.args);
 		let argStr = pretty(test.args);
 		
-		return <li key={cnt.toString()}>
+		return <li key={""+cnt.toString()}>
 			<div className="collapsible-header card blue-grey test">
 				{chips}
 				Test case #{index}

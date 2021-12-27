@@ -37,30 +37,6 @@ export default {
 			expectConsoleOutput: true,
 			expectedConsoleOutput: "Hello, George!" 
 		},
-		{ 
-			args: "George", 
-			expectReturnValue: false,
-			expectConsoleOutput: true,
-			expectedConsoleOutput: "Hello, George!" 
-		},
-		{ 
-			args: "George", 
-			expectReturnValue: false,
-			expectConsoleOutput: true,
-			expectedConsoleOutput: "Hello, George!" 
-		},
-		{ 
-			args: "George", 
-			expectReturnValue: false,
-			expectConsoleOutput: true,
-			expectedConsoleOutput: "Hello, George!" 
-		},
-		{ 
-			args: "George", 
-			expectReturnValue: false,
-			expectConsoleOutput: true,
-			expectedConsoleOutput: "Hello, George!" 
-		},
 		
 	],
 	TestCode: "hello(args);",

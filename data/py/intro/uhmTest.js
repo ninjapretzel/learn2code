@@ -4,7 +4,7 @@ import { Lesson } from "../../../src/lesson.js";
 export default {
 	Content: {
 		Category: "Intro",
-		Lesson: "Hello World", 	
+		Lesson: "Uhm Test", 	
 		LessonText: "The first thing any programmer does is make their computer say"
 			+ "\n\"Hello, World!\"."
 			+ "\nUse the print(\"stuff\") function",

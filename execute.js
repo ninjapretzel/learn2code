@@ -1,7 +1,7 @@
-import { queryParams, measure, show, render, delay, expandCollapsible, appendRender } from "./common.js"
+import { showBrowse, Categories } from "./browse.js";
+import { queryParams, measure, show, render, delay, expandCollapsible, appendRender, GLOBALS } from "./common.js"
 import { Lesson } from "./src/lesson.js"
 import * as vm from "./src/vm.js"
-
 
 const LANG = queryParams["lang"] || "js";
 const PY = LANG === "py";
@@ -60,6 +60,7 @@ function clearMarkers() {
 	markers = []	
 }
 
+
 export async function showLesson(l) {
 	if (l) { lesson = l }
 	
@@ -92,6 +93,45 @@ export async function showLesson(l) {
 	}
 	rerenderTestCases();
 }
+
+export function goToLesson(lessonID) {
+	if (lessonID) {
+			
+		try {
+			const lowCats = {}
+			for (let key in Categories) { lowCats[key.toLowerCase()] = Categories[key]; }
+			console.log("Attempting to load \""+lessonID+"\"");
+			const splits = lessonID.split(".");;
+			console.log("splits=",splits);
+			const catName = splits[0].toLowerCase(); // One browser goes lowercase for query params... ugh
+			const lessonName = splits[1].toLowerCase();
+			
+			const cat = lowCats[catName];
+			if (!cat) { console.log("No category", catName); throw "oops"; }
+			console.log("got category", catName, "->", cat);
+			const lang = cat[GLOBALS.LANG];
+			if (!lang) { console.log("No language", GLOBALS.LANG); throw "oops"; }
+			console.log("got language", GLOBALS.LANG, "->", lang);
+			let idx = -1;
+			for (let i = 0; i < lang.length; i++) {
+				if (lang[i].Content.Lesson.toLowerCase() === lessonName) {
+					idx = i;
+					break;
+				}
+				// if (lang[i].Content.Lesson.equalsIgnoreCase(lessonName)) { idx = i; break; }	
+			}
+			if (idx < 0) { console.log("No lesson", lessonName); throw "oops"; }
+			console.log("got lesson", lessonName, "->", lang[idx]);
+			showLesson(lang[idx]);
+		} catch (e) { 
+			console.error(e);
+			showBrowse();
+		}
+	} else {
+		showBrowse();
+	}	
+}
+GLOBALS.goToLesson = goToLesson;
 
 export let renderTestCases = async function() {
 	function passFail(result, key) {
@@ -171,3 +211,6 @@ function LoadCodeMirror() {
 		
 	});
 }
+
+GLOBALS.LANG = LANG;
+GLOBALS.showLesson = showLesson;

@@ -1,6 +1,7 @@
 import { urlParam } from "./src/pageUtils.js";
 export const queryParams = urlParam();
 export const GLOBALS = {};
+window.GLOBALS = GLOBALS;
 
 export function expandCollapsible(open, index) {
 	try { $('.collapsible').collapsible( {accordion: false} ); } 
@@ -89,3 +90,5 @@ export function delay(ms) {
 		setTimeout(()=>{resolve(true);}, ms);
 	})
 }
+
+

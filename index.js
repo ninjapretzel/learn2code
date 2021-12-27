@@ -1,8 +1,8 @@
 import * as vm from "./src/vm.js";
 import { Lesson } from "./src/lesson.js";
-import { AllLessons, Categories, showBrowse } from "./browse.js"
-import { showExec, showLesson } from "./execute.js"
-import { GLOBALS, render, appendRender, show, delay } from "./common.js"
+import { goToLesson } from "./execute.js"
+import { GLOBALS, render, appendRender, show, delay, queryParams  } from "./common.js"
+import { showBrowse } from "./browse.js";
 
 // Collect information:
 // inputs & Timings of inputs
@@ -36,30 +36,14 @@ $(document).ready(async ()=>{
 	// show("exec");
 	// await showExec();
 	// await(delay(20));
-	showLesson(Categories["Intro"]["js"][0]);
+	// showLesson(Categories["Intro"]["js"][0]);
 	// showLesson(Categories["Intro"]["js"][1]);
 	
-	//await showBrowse();
-	
-	const test1 = <div> hi </div>
-	const test2 = <div className="red"> hi </div>
-	const test3 = <div> {test1} {test2} </div>
-	
-	// render("#hello", test3);
-	// Okay, I really don't know why this kind of...
-	// hybrid jquery-and-babel-had-a-baby-in-the-browser monster
-	// isn't the _default_ approach to modern web development...
-	// appendRender("#output", "TestResultCard", {
-	// 	index:3,
-	// 	test:{ 
-	// 		args: ["args", "value", "or", "array"], 
-	// 		expectReturnValue: true,
-	// 		expected: "expectedReturn", 
-	// 		expectConsoleOutput: true,
-	// 		expectedConsole: "expected console output" 
-	// 	},
-	// 	result: {}
-		
-	// });
-	
+	const lessonID = queryParams["lesson"];
+	if (lessonID) {
+		goToLesson(lessonID);
+	} else {
+		showBrowse();
+	}
+	// console.log("QPs are", queryParams);
 });
