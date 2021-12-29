@@ -1,3 +1,4 @@
+import { GLOBALS } from "../../../common.js";
 import { Lesson } from "../../../src/lesson.js";
 
 /** @type {Lesson} */
@@ -8,8 +9,8 @@ export default {
 		LessonText: "The first thing any programmer does is make their computer say"
 			+ "\n\"Hello, World!\"."
 			+ "\nUse the print(\"stuff\") function"
+			+ "\nalso, make it draw an 'x' using `line(x1,y1,x2,y2)`... for testing purposes"
 			+ "\nalso, make it return 5... for testing purposes"
-			+ "\nalso, make it draw an 'x'... for testing purposes"
 		,
 		DocLinks: [""]
 	},
@@ -30,9 +31,8 @@ export default {
 				PLUGINS["Drawing"].canvasSetup(canvas, d);
 				d.line(20,20,80,80);
 				d.line(20,80,80,20);
-				const ctx = canvas.getContext('2d');
-				const img = ctx.getImageData(0,0,ctx.width, ctx.height);
-				return img.data;
+				
+				return window.extractPixels("#backCanvas");
 			}
 		},	
 	],

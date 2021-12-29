@@ -196,9 +196,26 @@ function color(r,g,b) {
 	return `rgb(${r},${g},${b})`; 
 }
 function fcolor (r,g,b) { return color(r*256,g*256,b*256); }
+function extractPixels(query) {
+	const canvas = $(query)[0];
+	if (canvas && canvas.getContext) {
+		const ctx = canvas.getContext('2d');
+		const img = ctx.getImageData(0,0,canvas.width, canvas.height);
+		return img.data;
+	}
+	return null;
+}
+// @HACK unfortunately, GLOBALS is not available here.
+// So instead, we'll pass this function through window...
+// I really hate passing things through window... 
+window.extractPixels = extractPixels;
+
 class DrawingPlugin extends L2CPlugin {
 	get id() { return "Drawing"; }
-	extract(result) { return this.canvas; }
+	extract(result) { 
+		
+		return this.canvas;
+	}
 	
 	panel(data) {
 		const mainCanvas = TEMPLATES["Canvas"].draw({id:"mainCanvas"});
