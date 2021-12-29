@@ -9,6 +9,7 @@ export default {
 			+ "\n\"Hello, World!\"."
 			+ "\nUse the print(\"stuff\") function"
 			+ "\nalso, make it return 5... for testing purposes"
+			+ "\nalso, make it draw an 'x'... for testing purposes"
 		,
 		DocLinks: [""]
 	},
@@ -23,7 +24,16 @@ export default {
 			expectReturnValue: true,
 			expectedReturnValue: 5, 
 			expectDrawing: true,
-			expectedDrawing: null,
+			expectedDrawing: function() {
+				const canvas = $("#backCanvas")[0];
+				const d = {};
+				PLUGINS["Drawing"].canvasSetup(canvas, d);
+				d.line(20,20,80,80);
+				d.line(20,80,80,20);
+				const ctx = canvas.getContext('2d');
+				const img = ctx.getImageData(0,0,ctx.width, ctx.height);
+				return img.data;
+			}
 		},	
 	],
 	TestCode: "hello();",

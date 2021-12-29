@@ -9,16 +9,26 @@
 export class TestCase {
 	/** @type {any} Arguments to the function call. . Typically a {string} or {any[]} */
 	args = [ "args", "value", "or", "array" ]
+	// The following are not always needed to be defined,
+	// the form for these is: 
+	// "expect<pluginID>" - true if plugin is expected to work on this test
+	// "expected<pluginID>" - any value, representing the expected value for the test
 	/** @type {boolean} Is there an expected return value from running this test case? */
-	expectedReturnValue = true
+	expectReturnValue = true
 	/** @type {any} The expected return value, as verbatim as possible. */
-	expected = "expectedReturn"
+	expectedReturnValue = "expectedReturn"
 	/** @type {boolean} Is there exact expected console output from running this test case? */
 	expectConsoleOutput = true
 	/** @type {string} the exact expected console output from running this test case, verbatim. */
-	expectedConsole = "expected console output"
-	/** @type {undefined|expectedValueChecker} the function to use to check expected values, or undefined or other falsey value to use a default comparison. */
-	expectedValueChecker = undefined
+	expectedConsoleOutput = "expected console output"
+	/** @type {number} Override of plugin's distance threshold for this test case. Distance is expected in range [0-infinity) with 0 being perfect. */
+	thresholdDistanceConsoleOutput = 1
+	/** @type {boolean} Is there expected drawing from running this test case? */
+	expectDrawing = false
+	/** @type {string} The expected drawing function to compare against. */
+	expectedDrawing = null
+	/** @type {number} Override of plugin's accuracy for this test case Accuracy is expected in range [0-100] with 100 being perfect. */
+	thresholdAccuracyDrawing = 99
 }
 
 export class Lesson {

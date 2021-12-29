@@ -116,11 +116,10 @@ export async function execInternal(script, lesson, langInfo) {
 		const res = { run:true, test, index:i}
 		
 		for (let id in PLUGINS) {
-			expected[id] = test["expect" + id] ? true : false;
-			//console.log("Expecting:",id,test["expect"+id])
-			if (expected[id]) {
-				//console.log("pre: expecting", id, "on test", i);
-				PLUGINS[id].preRun(test, injected, res);
+			const plugin = PLUGINS[id];
+			if (plugin.isExpected(lesson)) {
+				expected[id] = true;
+				plugin.preRun(test, injected, res);
 				res["expect"+id] = true;
 			}
 		}
@@ -141,8 +140,6 @@ export async function execInternal(script, lesson, langInfo) {
 			}
 		}
 		const end = new Date().getTime();
-		
-		const consoleOutput = simConsole.buffer;
 		const elapsedMS = end-start;
 		//const matchedReturnValue = expectExact 
 		//	? result === expected
@@ -153,26 +150,29 @@ export async function execInternal(script, lesson, langInfo) {
 		
 		for (let id in PLUGINS) {
 			const plugin = PLUGINS[id];
-			const judge = plugin.judge(test, res[id]);
-			if (judge.expected) {
+			if (plugin.isExpected(test)) {
+				const judge = plugin.judge(test, res[id]);
 				res[id] = plugin.extract(res);
 				console.log(id, "has", res[id]);
 				plugin.postRun(test, injected, res);
+				
 				
 				if (typeof(checked) === "boolean") {
 					res["matched"+id] = checked;
 				} else if (typeof(checked) === "number") {
 					if (typeof(judge.distance) === "number") {
 						res["distance"+id] = checked;
-						res["matched"+id] = judge.distance < plugin.distanceThreshold
+						const threshold = test["thresholdDistance"+id] || plugin.distanceThreshold
+						res["matched"+id] = judge.distance <= threshold
 					} else if (typeof(judge.accuracy) === "number") {
 						res["accuracy"+id] = checked;
-						res["matched"+id] = judge.accuracy > plugin.accuracyThreshold
+						const threshold = test["thresholdAccuracy"+id] || plugin.accuracyThreshold
+						res["matched"+id] = judge.accuracy >= threshold
 					}
-					distanceMatched = (Math.abs(res["distance"+id]) > 0)
+					// distanceMatched = (Math.abs(res["distance"+id]) > 0)
 				}
+				
 			}
-			
 			
 		}
 			

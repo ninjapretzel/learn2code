@@ -18,7 +18,7 @@ class Execute extends Template {
 		const panels = [];
 		for (let key in PLUGINS) {
 			const plugin = PLUGINS[key];
-			if (expects(data, plugin)) {
+			if (plugin.isExpected(data)) {
 				console.log(plugin.id, "is expected");
 				const panel = plugin.panel(data);
 				if (panel) { panels.push(panel); }

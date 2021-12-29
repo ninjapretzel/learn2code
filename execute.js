@@ -92,6 +92,10 @@ export async function showLesson(l) {
 		codeEditor.markText(startOfPostamble, endMarker, { inclusiveRight: true, readOnly: true});
 	}
 	rerenderTestCases();
+	for (let id in PLUGINS) {
+		const plugin = PLUGINS[id];
+		plugin.ready();
+	}
 }
 
 export function goToLesson(lessonID) {

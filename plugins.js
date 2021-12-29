@@ -19,7 +19,26 @@ class Judgement {
 class L2CPlugin {
 	
 	/** @type {string} Unique ID for this plugin, used to store information related to the plugin*/
-	get id() { return "uniqueID"; } 
+	get id() { return "uniqueID"; }
+	/** @type {number} Threshold for accuracy for grades. Default = 90. override to change */
+	get accuracyThreshold() { return 90; }
+	/** @type {number} Threshold for distance for grades. Default = 0. override to change */
+	get distanceThreshold() { return 0; }
+	
+	/** Function to tell if this plugin is expected (used) by a given lesson or TestCase
+	 * a lesson is considered expected if it has a truthy property named "expect{id}"
+	 * where {id} is the string returned by @see id
+	 * @param {Lesson|TestCase} data Lesson or TestCase to check
+	 * @returns {boolean} true when expected, false otherwise. */
+	isExpected(data) {
+		if (data["expect"+this.id]) { return true; }
+		if (data.TestCases) {
+			for (let test of data.TestCases) {
+				if (test["expect"+this.id]) { return true; }	
+			}
+		}
+		return false;
+	}
 	
 	/** Function to judge 
 	 * @param {TestCase} test TestCase to judge against
@@ -72,6 +91,10 @@ class L2CPlugin {
 	 * @returns {?(ReactDOMElement|string)} item to actually display */
 	display(test, result) { return <div> Please Override <tt>display(test, result); </tt> </div> }
 	
+	/** Function called once the given lesson is loaded and the page set up.
+	 * @param {Lesson} lesson Lesson object that has been loaded */
+	ready(lesson) {}
+	
 	/** Function to run each time before code is executed
 	 * @param {TestCase} test test case 
 	 * @param {ExecutionResult} result result to check */
@@ -81,6 +104,7 @@ class L2CPlugin {
 	 * @param {TestCase} test test case 
 	 * @param {ExecutionResult} result result to check */
 	postRun(test, injected, result) { }
+	
 	
 }
 
@@ -164,23 +188,77 @@ class ConsoleOutputPlugin extends L2CPlugin {
 }
 
 
+const TAU = 2 * Math.PI;
+function cap256(v) { v = v % 256; if (v < 0) { v += 256; } return Math.floor(v); }
+function clamp(v,min=0,max=1) { return (v < min) ? min : ((v > max) ? max : v); }
+function color(r,g,b) { 
+	r = cap256(r); g = cap256(g); b = cap256(g);
+	return `rgb(${r},${g},${b})`; 
+}
+function fcolor (r,g,b) { return color(r*256,g*256,b*256); }
 class DrawingPlugin extends L2CPlugin {
 	get id() { return "Drawing"; }
 	extract(result) { return this.canvas; }
 	
 	panel(data) {
 		const mainCanvas = TEMPLATES["Canvas"].draw({id:"mainCanvas"});
-		this.canvas = mainCanvas;
 		const backCanvas = TEMPLATES["Canvas"].draw({id:"backCanvas"});
 		this.backCanvas = backCanvas;
 		return <div className="col s6 row rowfix card blue-grey darken-2">
 			Drawing Canvas:
 			{mainCanvas}
+			<div className="hidden">{backCanvas}</div>
 		</div>	
+	}
+	canvasSetup(target, injected) {
+		this.ctx = target.getContext("2d");
+		this.ctx.font = "12px Arial";
+		this.ctx.fillStyle = this.ctx.strokeStyle = this.pen = "rgb(0,0,0)";
+		const w = target.width;
+		const h = target.height;
+		injected.color = color;
+		injected.fcolor = fcolor;
+		injected.setPenColor = (color)=>{
+			this.pen = color;
+			this.ctx.fillStyle = color;
+			this.ctx.strokeStyle = color;
+		}
+		injected.clear = (color="rgb(255,255,255)")=>{
+			const prevPen = this.pen;
+			injected.setPenColor(color);
+			injected.fillRectangle(w / 2, h / 2, w, h);
+			injected.setPenColor(prevPen);
+		}
+		injected.line = (x1,y1,x2,y2)=>{
+			this.ctx.beginPath();
+			this.ctx.moveTo(x1,y1);
+			this.ctx.lineTo(x2,y2);
+			this.ctx.stroke();
+		}
+		injected.circle = (x,y,r) => {
+			this.ctx.beginPath();
+			this.ctx.arc(x,y,r,0,TAU);
+			this.ctx.stroke();
+		}
+		injected.fillSquare = (x,y,side) => {
+			this.ctx.fillRect(x-side/2, y-side/2, side, side);
+		}
+		injected.fillRectangle = (x,y,w,h) => {
+			this.ctx.fillRect(x-w/2, y-h/2, w, h);
+		}
+		injected.text = (x,y,text) => { this.ctx.fillText(text,x,y); }
+	}
+	ready(lesson) {
+		this.target = $("#mainCanvas")[0];
+		const fn = {}
+		this.canvasSetup(this.target, fn);
+		fn.clear();
 	}
 	
 	preRun(test, injected, result) {
-		this.target = this.canvas;
+		this.target = $("#mainCanvas")[0];
+		this.canvasSetup(this.target, injected);
+		injected.clear();
 		
 	}
 	postRun(test, injected, result) {
