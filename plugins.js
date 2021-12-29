@@ -235,13 +235,36 @@ class ConsoleOutputPlugin extends L2CPlugin {
 
 
 const TAU = 2 * Math.PI;
-function cap256(v) { v = v % 256; if (v < 0) { v += 256; } return Math.floor(v); }
+function cap256(v) { return Math.floor(v); }
 function clamp(v,min=0,max=1) { return (v < min) ? min : ((v > max) ? max : v); }
+function frac(v) { return v-Math.floor(v); }
+function abs(v) { return v < 0 ? -v : v; }
+function fmod(a,b) { 
+	const c = frac(abs(a/b)) * abs(b);
+	return (a < 0) ? -c : c 
+}
 function color(r,g,b) { 
-	r = cap256(r); g = cap256(g); b = cap256(g);
+	r = cap256(r); g = cap256(g); b = cap256(b);
 	return `rgb(${r},${g},${b})`; 
 }
 function fcolor (r,g,b) { return color(r*256,g*256,b*256); }
+function hsv(h,s,v) {
+	h = fmod(h, 1.0);
+	if (h < 0) { h += 1.0; }
+	if (s == 0) { return fcolor(v,v,v); }
+	h *= 6.0;
+	const i = Math.floor(h);
+	const f = h - i;
+	const p = v * (1.0-s);
+	const q = v * (1.0-s*f);
+	const t = v * (1.0 - s * (1.0-f));
+	if (i == 0) { return fcolor(v,t,p); }
+	else if (i == 1) { return fcolor(q,v,p); }
+	else if (i == 2) { return fcolor(p,v,t); }
+	else if (i == 3) { return fcolor(p,q,v); }
+	else if (i == 4) { return fcolor(t,p,v); }
+	return fcolor(v,p,q);
+}
 function extractPixels(query) {
 	const canvas = $(query)[0];
 	if (canvas && canvas.getContext) {
@@ -281,6 +304,9 @@ class DrawingPlugin extends L2CPlugin {
 		const h = target.height;
 		injected.color = color;
 		injected.fcolor = fcolor;
+		injected.hsv = hsv;
+		injected.rgb = fcolor;
+		injected.rgb32 = color;
 		injected.setPenColor = (color)=>{
 			this.pen = color;
 			this.ctx.fillStyle = color;
@@ -289,7 +315,7 @@ class DrawingPlugin extends L2CPlugin {
 		injected.clear = (color="rgb(255,255,255)")=>{
 			const prevPen = this.pen;
 			injected.setPenColor(color);
-			injected.fillRectangle(w / 2, h / 2, w, h);
+			injected.filledRectangle(w / 2, h / 2, w, h);
 			injected.setPenColor(prevPen);
 		}
 		injected.line = (x1,y1,x2,y2)=>{
@@ -303,10 +329,25 @@ class DrawingPlugin extends L2CPlugin {
 			this.ctx.arc(x,y,r,0,TAU);
 			this.ctx.stroke();
 		}
-		injected.fillSquare = (x,y,side) => {
+		injected.filledCircle = (x,y,r) => {
+			this.ctx.beginPath();
+			this.ctx.arc(x,y,r,0,TAU);
+			this.ctx.fill();
+		}
+		injected.square = (x,y,side) => {
+			this.ctx.beginPath();
+			this.ctx.rect(x-side/2, y-side/2, side, side);
+			this.ctx.stroke();
+		}
+		injected.filledSquare = (x,y,side) => {
 			this.ctx.fillRect(x-side/2, y-side/2, side, side);
 		}
-		injected.fillRectangle = (x,y,w,h) => {
+		injected.rectangle = (x,y,w,h) => {
+			this.ctx.beginPath();
+			this.ctx.rect(x-w/2, y-h/2, w, h);
+			this.ctx.stroke();
+		}
+		injected.filledRectangle = (x,y,w,h) => {
 			this.ctx.fillRect(x-w/2, y-h/2, w, h);
 		}
 		injected.text = (x,y,text) => { this.ctx.fillText(text,x,y); }
