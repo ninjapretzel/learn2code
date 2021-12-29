@@ -90,7 +90,7 @@ class L2CPlugin {
 	 * @param {ExecutionResult} result ExecutionResult to judge
 	 * @returns {?Judgement} Judgement made, if any is applicable, otherwise either a null/undefined or { expected:false } is expected. */
 	judge(test, result) {
-		console.log(this.id, "judging", result, "for", test);
+		// console.log(this.id, "judging", result, "for", test);
 		if (!result) { return false; }
 		if (test["expect"+this.id]) {
 			return {

@@ -161,18 +161,18 @@ export async function execInternal(script, lesson, langInfo) {
 				
 				if (typeof(checked) === "boolean") {
 					res["matched"+id] = checked;
-					console.log(id, "Got matched:", checked);
+					//console.log(id, "Got matched:", checked);
 				} else if (typeof(checked) === "number") {
 					if (typeof(judge.distance) === "number") {
 						res["distance"+id] = checked;
 						const threshold = test["thresholdDistance"+id] || plugin.distanceThreshold
 						res["matched"+id] = judge.distance <= threshold
-						console.log(id, "Got distance:", checked);
+						//console.log(id, "Got distance:", checked);
 					} else if (typeof(judge.accuracy) === "number") {
 						res["accuracy"+id] = checked;
 						const threshold = test["thresholdAccuracy"+id] || plugin.accuracyThreshold
 						res["matched"+id] = judge.accuracy >= threshold
-						console.log(id, "Got accuracy:", checked);
+						//console.log(id, "Got accuracy:", checked);
 					}
 				} else {
 					console.log("wtf Got judgement", judge);
