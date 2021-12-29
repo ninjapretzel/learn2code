@@ -68,7 +68,7 @@ export async function showLesson(l) {
 		const element = $("#"+x);
 		if (element.length != 0) { 
 			element.html(lesson.Content[x]);
-		}	
+		}
 	}
 	
 	codeToLoad = "";
@@ -94,7 +94,7 @@ export async function showLesson(l) {
 	rerenderTestCases();
 	for (let id in PLUGINS) {
 		const plugin = PLUGINS[id];
-		plugin.ready();
+		plugin.ready(l);
 	}
 }
 
