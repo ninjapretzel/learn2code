@@ -100,18 +100,18 @@ export function goToLesson(lessonID) {
 		try {
 			const lowCats = {}
 			for (let key in Categories) { lowCats[key.toLowerCase()] = Categories[key]; }
-			console.log("Attempting to load \""+lessonID+"\"");
+			//console.log("Attempting to load \""+lessonID+"\"");
 			const splits = lessonID.split(".");;
-			console.log("splits=",splits);
+			//console.log("splits=",splits);
 			const catName = splits[0].toLowerCase(); // One browser goes lowercase for query params... ugh
 			const lessonName = splits[1].toLowerCase();
 			
 			const cat = lowCats[catName];
 			if (!cat) { console.log("No category", catName); throw "oops"; }
-			console.log("got category", catName, "->", cat);
+			//console.log("got category", catName, "->", cat);
 			const lang = cat[GLOBALS.LANG];
 			if (!lang) { console.log("No language", GLOBALS.LANG); throw "oops"; }
-			console.log("got language", GLOBALS.LANG, "->", lang);
+			//console.log("got language", GLOBALS.LANG, "->", lang);
 			let idx = -1;
 			for (let i = 0; i < lang.length; i++) {
 				if (lang[i].Content.Lesson.toLowerCase() === lessonName) {
@@ -121,7 +121,7 @@ export function goToLesson(lessonID) {
 				// if (lang[i].Content.Lesson.equalsIgnoreCase(lessonName)) { idx = i; break; }	
 			}
 			if (idx < 0) { console.log("No lesson", lessonName); throw "oops"; }
-			console.log("got lesson", lessonName, "->", lang[idx]);
+			//console.log("got lesson", lessonName, "->", lang[idx]);
 			showLesson(lang[idx]);
 		} catch (e) { 
 			console.error(e);

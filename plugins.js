@@ -8,9 +8,9 @@ class Judgement {
 	/** @type {?boolean} If the value matched exactly or not, in a pass/fail manner. */
 	matched = false
 	/** @type {?number} Numeric distance, expected to be used when exact matches are not able to be used, but an exact distance measure is available. */
-	distance = 0
+	distance = undefined
 	/** @type {?number} Numeric accuracy, expected to be within [ 0, 100 ] when exact matches are not able to be used, and distance measure is not really applicable. */
-	accuracy = 0
+	accuracy = undefined
 }
 
 
@@ -43,20 +43,8 @@ class L2CPlugin {
 	/** Function to check if expected value matches return value
 	 * @param {any} expectedValue expected value
 	 * @param {any} resultValue actual value from running test
-	 * @returns {?ReactDOMElement} Item to append to DOM for test case, otherwise a null/undefined is expected. */
+	 * @returns {number|boolean} Judgement of result vs expected values. */
 	check(expectedValue, resultValue) { return expectedValue === resultValue; }
-	
-	/** Function to append visuals for a given test case/result 
-	 * @param {TestCase} test TestCase to draw
-	 * @param {ExecutionResult} result ExecutionResult to draw
-	 * @returns {?ReactDOMElement} Item to append to DOM for test case, otherwise a null/undefined is expected. */
-	draw(test, result) {
-		let text = "Expected " + this.id + " " 
-			+ JSON.stringify(test[expected+this.id]) 
-			+ " got " 
-			+ JSON.stringify(result[this.id] ?? "<NULLPTR>");
-		return <span> {text} </span>
-	}
 	
 	/** Function to decide to draw a chip or not. 
 	 * @param {TestCase} test TestCase to decide to draw a chip for
@@ -72,13 +60,36 @@ class L2CPlugin {
 	 * @returns {?string} classes to append to results display, if any */
 	classes(test, result, judgement) { return "neutral"; }
 	
+	/** Function to draw a panel for the plugin.
+	 * @param {Lesson} data lesson data (if needed) in panel
+	 * @returns {?ReactDOMElement} Panel to add, if needed, or a falsey value to add nothing */
+	panel(data) { return null; }
+	
+	/** Function called to display a result in the test case card. 
+	 * Should return either a  ReactDOMElement, a string, or a falsey value to display nothing  
+	 * @param {TestCase} test respective TestCase
+	 * @param {any} result result to display. Either is the expected value or the student's result
+	 * @returns {?(ReactDOMElement|string)} item to actually display */
+	display(test, result) { return <div> Please Override <tt>display(test, result); </tt> </div> }
 	
 	/** Function to run each time before code is executed
 	 * @param {TestCase} test test case 
 	 * @param {ExecutionResult} result result to check */
 	preRun(test, injected, result) { }
+	
+	/** Function to run each time after code is executed
+	 * @param {TestCase} test test case 
+	 * @param {ExecutionResult} result result to check */
 	postRun(test, injected, result) { }
 	
+}
+
+function pretty(thing) {
+	let str = JSON.stringify(thing);
+	if (str === undefined) { str = "undefined"; }
+	if (str === null) { str = "null"; }
+	if (str === "") { str = "(Empty String)"; }	
+	return str;
 }
 
 /** Both a sample plugin, and the plugin for handling return values. */
@@ -97,6 +108,7 @@ class ReturnValuePlugin extends L2CPlugin {
 		return "neutral";
 	}
 	
+	display(test, result) { return pretty(result); }
 	
 	preRun(test, injected, result) { }
 	postRun(test, injected, result) { }
@@ -115,6 +127,18 @@ class ConsoleOutputPlugin extends L2CPlugin {
 	get id() { return "ConsoleOutput"; }
 	extract(result) { return this.simConsole.buffer; }
 	
+	judge(test, result) {
+		if (!result) { return false; }
+		if (test["expect"+this.id]) {
+			return {
+				expected: true,
+				matched: this.check(test["expected"+this.id], result[this.id])
+			}
+		}
+		return false;
+	}
+	
+	
 	chip(test, result, judgement) { 
 		return judgement.expected ? "print" : null; 
 	}
@@ -125,6 +149,7 @@ class ConsoleOutputPlugin extends L2CPlugin {
 		}
 		return "neutral";
 	}
+	display(test, result) { return pretty(result); }
 	preRun(test, injected, result) {
 		if (!this.simConsole) { this.simConsole = new SimConsole(); }
 		this.simConsole.clear();
@@ -138,6 +163,32 @@ class ConsoleOutputPlugin extends L2CPlugin {
 	}
 }
 
+
+class DrawingPlugin extends L2CPlugin {
+	get id() { return "Drawing"; }
+	extract(result) { return this.canvas; }
+	
+	panel(data) {
+		const mainCanvas = TEMPLATES["Canvas"].draw({id:"mainCanvas"});
+		this.canvas = mainCanvas;
+		const backCanvas = TEMPLATES["Canvas"].draw({id:"backCanvas"});
+		this.backCanvas = backCanvas;
+		return <div className="col s6 row rowfix card blue-grey darken-2">
+			Drawing Canvas:
+			{mainCanvas}
+		</div>	
+	}
+	
+	preRun(test, injected, result) {
+		this.target = this.canvas;
+		
+	}
+	postRun(test, injected, result) {
+		
+		
+	}
+}
+
 /** @type {Map<string, L2CPlugin>} plugins provided for learn2code */
 const PLUGINS = {};
 function registerPlugin(plugin) {
@@ -145,3 +196,4 @@ function registerPlugin(plugin) {
 }
 registerPlugin(new ReturnValuePlugin());
 registerPlugin(new ConsoleOutputPlugin());
+registerPlugin(new DrawingPlugin());

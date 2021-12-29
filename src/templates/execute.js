@@ -4,10 +4,27 @@ function newliner(text) {
 	});
 }
 
+function expects(lesson, plugin) {
+	for (let test of lesson.TestCases) {
+		if (test["expect"+plugin.id]) { return true; }
+	}
+	return false;
+}
+
 class Execute extends Template {
-	draw(data) {
+	draw(data) { // data:Lesson
 		let { Category, LessonText, Lesson } = data.Content;
 		LessonText = newliner(LessonText)
+		const panels = [];
+		for (let key in PLUGINS) {
+			const plugin = PLUGINS[key];
+			if (expects(data, plugin)) {
+				console.log(plugin.id, "is expected");
+				const panel = plugin.panel(data);
+				if (panel) { panels.push(panel); }
+			}
+		}
+		
 		return <div className="col s12 row rowfix">
 			<div className="col s12 row rowfix">
 				<div className="col s2"></div>
@@ -27,6 +44,7 @@ class Execute extends Template {
 					</div>
 				</div>
 			</div>
+			{panels}
 			<div className="col s6 card large blue-grey darken-2">
 				<h5> Test Cases & Output : </h5>
 				<ul id="output" className="black-text collapsible expandable"></ul>

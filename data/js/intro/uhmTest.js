@@ -22,6 +22,8 @@ export default {
 			expectedConsoleOutput: "Hello, World!",
 			expectReturnValue: true,
 			expectedReturnValue: 5, 
+			expectDrawing: true,
+			expectedDrawing: null,
 		},	
 	],
 	TestCode: "hello();",

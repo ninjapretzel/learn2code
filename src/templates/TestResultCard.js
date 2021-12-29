@@ -9,6 +9,7 @@ function passFail(result, key) {
 	}
 	return 0;
 }
+
 function pretty(thing) {
 	let str = JSON.stringify(thing);
 	if (str === undefined) { str = "undefined"; }
@@ -16,9 +17,10 @@ function pretty(thing) {
 	if (str === "") { str = "(Empty String)"; }	
 	return str;
 }
+
 class TestResultCard extends Template {
 	
-	draw(data) { // ExecutionResult
+	draw(data) { // ExecutionResult data
 		
 		const result = data;
 		const { test, index, run } = result;
@@ -60,16 +62,16 @@ class TestResultCard extends Template {
 				insides.push(
 					<div className={"col s12 card test lighten-2 "+color}>
 						<span>Expected {id}: </span>
-						<pre>{pretty(test["expected"+id])}</pre>
+						<pre>{plugin.display(test, test["expected"+id])}</pre>
 						<span>Got:</span>
-						<pre>{pretty(result[id])}</pre>
+						<pre>{plugin.display(test, result[id])}</pre>
 					</div>
 				);
 			} else {
 				insides.push(
 					<div className={"col s12 card test lighten-2 "+color}>
 						<span>Expected {id}: </span>
-						<pre>{pretty(test["expected"+id])}</pre>
+						<pre>{plugin.display(test, test["expected"+id])}</pre>
 					</div>
 				);
 			}

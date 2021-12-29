@@ -153,13 +153,26 @@ export async function execInternal(script, lesson, langInfo) {
 		
 		for (let id in PLUGINS) {
 			const plugin = PLUGINS[id];
-			if (expected[id]) {
+			const judge = plugin.judge(test, res[id]);
+			if (judge.expected) {
 				res[id] = plugin.extract(res);
 				console.log(id, "has", res[id]);
 				plugin.postRun(test, injected, res);
 				
-				res["matched"+id] = plugin.check(test["expected"+id], res[id]);
+				if (typeof(checked) === "boolean") {
+					res["matched"+id] = checked;
+				} else if (typeof(checked) === "number") {
+					if (typeof(judge.distance) === "number") {
+						res["distance"+id] = checked;
+						res["matched"+id] = judge.distance < plugin.distanceThreshold
+					} else if (typeof(judge.accuracy) === "number") {
+						res["accuracy"+id] = checked;
+						res["matched"+id] = judge.accuracy > plugin.accuracyThreshold
+					}
+					distanceMatched = (Math.abs(res["distance"+id]) > 0)
+				}
 			}
+			
 			
 		}
 			

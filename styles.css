@@ -55,3 +55,5 @@ test {
 .success { background-color: #81c784 !important; }
 .failure { background-color: #E57373 !important;}
 .neutral { background-color: #90a4ae !important; }
+
+canvas {border:1px solid #000000;}
