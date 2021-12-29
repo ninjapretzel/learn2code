@@ -11,7 +11,7 @@ export const pyInfo = {
 export default pyInfo;
 
 export function argsFormatter(args) {
-	return "args = " + JSON.stringify(args);	
+	return "args = " + JSON.stringify(args)
 }
 
 let pyodide = null;
@@ -21,15 +21,23 @@ async function load() {
 	console.log("Python ready, Version:", pyodide.runPython(`
 	import sys
 	sys.version
+	undefined=None;
+	null=None;
 	`));
 	
 	pyInfo.ready = true;
 }
 
-export async function exec(code, injectedFunctions) {
-	for (let name in injectedFunctions) {
-		pyodide.globals.set(name, injectedFunctions[name]);
+export async function exec(code, injected) {
+	for (let name in injected) {
+		pyodide.globals.set(name, injected[name]);
+		console.log("Injected " + name);
 	}
+	code = ""
+	+"\nundefined=None"
+	+"\nnull=None"
+	+"\n"+code
+	console.log("Running the following code:\n",code);
 	pyodide.runPython(code);
 }
 export async function extract() {

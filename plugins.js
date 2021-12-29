@@ -6,14 +6,59 @@ class Judgement {
 	/** @type {?boolean} Was this judgement even expected by the respective test? */
 	expected = false
 	/** @type {?boolean} If the value matched exactly or not, in a pass/fail manner. */
-	matched = false
+	matched = undefined
 	/** @type {?number} Numeric distance, expected to be used when exact matches are not able to be used, but an exact distance measure is available. */
 	distance = undefined
 	/** @type {?number} Numeric accuracy, expected to be within [ 0, 100 ] when exact matches are not able to be used, and distance measure is not really applicable. */
 	accuracy = undefined
 }
 
-
+window.check = function(judge) {
+	if (!judge.expected) { return undefined; }
+	function has(thing) { return thing !== undefined && thing != null; }
+	function count() { 
+		let cnt = 0;
+		for (let i = 0; i < arguments.length; i++) {
+			if (arguments[i]) { cnt++; }
+		}
+		return cnt;
+	}
+	// This has to be exhaustive due to the way javascript treats any value as a boolean.
+	// Must match exactly, since just doing `judgement.matched` 
+	// would also produce false values on undefined/null
+	const hasMatched = has(judge.matched);
+	const hasDistance = has(judge.distance);
+	const hasAccuracy = has(judge.accuracy);
+	const present = count(hasMatched, hasDistance, hasAccuracy);
+	if (present !== 1) { 
+		throw new Error(`Expected only one of matched/distance/accuracy, but had ${present}.`);
+	}
+	if (hasMatched) {
+		if (judge.matched === false) { return false; }
+		else if (judge.matched === true) { return true; }
+		else { 
+			throw new Error(`Unexpected value ${judge.matched} for \`matched\` field of judgement. expected type boolean`);
+		}
+	} else if (hasDistance) {
+		if (typeof(judge.distance) === "number") {
+			if (judge.distance < 0) {
+				throw new Error(`Unexpected value ${judge.distance} for \`distance\` field of judgement. expected in range [0,infinity]`);
+			}
+			return judge.distance;
+		} else {
+			throw new Error(`Unexpected value ${judge.distance} for \`distance\` field of judgement. expected type number`);
+		}
+	} else if (hasAccuracy) {
+		if (typeof(judge.accuracy) === "number") {
+			if (judge.accuracy < 0 || judge.accuracy > 100) {
+				throw new Error(`Unexpected value ${judge.accuracy} for \`accuracy\` field of judgement. expected in range [0,100]`);
+			}
+			return judge.accuracy;
+		} else {
+			throw new Error(`Unexpected value ${judge.accuracy} for \`accuracy\` field of judgement. expected type number`);
+		}
+	}
+}
 
 /** Plugin that can be loaded into learn2code to add support for custom code judgement and feedback, or other functionality */
 class L2CPlugin {
@@ -45,6 +90,7 @@ class L2CPlugin {
 	 * @param {ExecutionResult} result ExecutionResult to judge
 	 * @returns {?Judgement} Judgement made, if any is applicable, otherwise either a null/undefined or { expected:false } is expected. */
 	judge(test, result) {
+		console.log(this.id, "judging", result, "for", test);
 		if (!result) { return false; }
 		if (test["expect"+this.id]) {
 			return {
@@ -151,16 +197,16 @@ class ConsoleOutputPlugin extends L2CPlugin {
 	get id() { return "ConsoleOutput"; }
 	extract(result) { return this.simConsole.buffer; }
 	
-	judge(test, result) {
-		if (!result) { return false; }
-		if (test["expect"+this.id]) {
-			return {
-				expected: true,
-				matched: this.check(test["expected"+this.id], result[this.id])
-			}
-		}
-		return false;
-	}
+	// judge(test, result) {
+	// 	if (!result) { return false; }
+	// 	if (test["expect"+this.id]) {
+	// 		return {
+	// 			expected: true,
+	// 			matched: this.check(test["expected"+this.id], result[this.id])
+	// 		}
+	// 	}
+	// 	return false;
+	// }
 	
 	
 	chip(test, result, judgement) { 

@@ -13,16 +13,14 @@ export default {
 	Postamble: "",
 	TestCases: [
 		{ 
-			args: "a", 
-			expectReturnValue: false,
+			args: "a",
 			expectConsoleOutput: true,
-			expectedConsole: "Hello, a!" 
+			expectedConsoleOutput: "Hello, a!" 
 		},
 		{ 
-			args: "b", 
-			expectReturnValue: false,
+			args: "b",
 			expectConsoleOutput: true,
-			expectedConsole: "Hello, b!" 
+			expectedConsoleOutput: "Hello, b!" 
 		},
 	],
 	TestCode: "result = hello(args);",

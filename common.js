@@ -67,7 +67,7 @@ export function render(where, what, data) {
 
 export function appendRender(where, what, data) {
 	const query = $(where);
-	console.log("append with data",data);
+	// console.log("appendRender with data",data);
 	if (TEMPLATES && TEMPLATES[what]) {
 		what = TEMPLATES[what].draw(data);
 	} else {

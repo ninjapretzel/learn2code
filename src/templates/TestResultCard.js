@@ -27,8 +27,6 @@ class TestResultCard extends Template {
 		
 		const extras = []
 		const chips = []
-		let wasFailure = false;
-		
 		
 		const insides = []
 		
@@ -43,39 +41,43 @@ class TestResultCard extends Template {
 		
 		for (let id in PLUGINS) {
 			const plugin = PLUGINS[id];
-			const judgement = plugin.judge(test, result);
-			
-			const color = passFailClasses[passFail(run?result:null, "matched"+id)];
-			// console.log(id, "Color=",color,"judged", judgement);
-			if (test["expect"+id]) {
-				if (run && !judgement.matched) { outColor = passFailClasses[2]; }
-				chips.push( 
-					<div className={"right chip material-icons lighten-2 "+color}>
-						{plugin.chip(test, result, judgement)}
-					</div>
-				);
+			if (plugin.isExpected(test)) {
+				const judgement = plugin.judge(test, result);
+				
+				const color = passFailClasses[passFail(run?result:null, "matched"+id)];
+				// console.log(id, "Color=",color,"judged", judgement);
+				if (test["expect"+id]) {
+					if (run && !judgement.matched) { 
+						console.log("failed by plugin", id);
+						outColor = passFailClasses[2];
+					}
+					chips.push( 
+						<div className={"right chip material-icons lighten-2 "+color}>
+							{plugin.chip(test, result, judgement)}
+						</div>
+					);
+				}
+				// console.log("rendering",id,"with test",test);
+				if (!test["expect"+id]) { continue; }
+				
+				if (run) {
+					insides.push(
+						<div className={"col s12 card test lighten-2 "+color}>
+							<span>Expected {id}: </span>
+							<pre>{plugin.display(test, test["expected"+id])}</pre>
+							<span>Got:</span>
+							<pre>{plugin.display(test, result[id])}</pre>
+						</div>
+					);
+				} else {
+					insides.push(
+						<div className={"col s12 card test lighten-2 "+color}>
+							<span>Expected {id}: </span>
+							<pre>{plugin.display(test, test["expected"+id])}</pre>
+						</div>
+					);
+				}
 			}
-			// console.log("rendering",id,"with test",test);
-			if (!test["expect"+id]) { continue; }
-			
-			if (run) {
-				insides.push(
-					<div className={"col s12 card test lighten-2 "+color}>
-						<span>Expected {id}: </span>
-						<pre>{plugin.display(test, test["expected"+id])}</pre>
-						<span>Got:</span>
-						<pre>{plugin.display(test, result[id])}</pre>
-					</div>
-				);
-			} else {
-				insides.push(
-					<div className={"col s12 card test lighten-2 "+color}>
-						<span>Expected {id}: </span>
-						<pre>{plugin.display(test, test["expected"+id])}</pre>
-					</div>
-				);
-			}
-			
 		}
 		
 		cnt++;

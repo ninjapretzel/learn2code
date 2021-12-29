@@ -10,15 +10,14 @@ export default {
 			+ "Use the `print()` function to do that.",
 		DocLinks: [""]
 	},
-	Preamble: "def hello:",
+	Preamble: "def hello():",
 	InitialCode: "\n\t# Edit Me!",
 	Postamble: "",
 	TestCases: [
 		{ 
 			args: undefined, 
-			expectReturnValue: false,
 			expectConsoleOutput: true,
-			expectedConsole: "Hello, World!" 
+			expectedConsoleOutput: "Hello, World!" 
 		},	
 	],
 	TestCode: "result = hello()",

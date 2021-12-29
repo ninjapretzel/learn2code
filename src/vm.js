@@ -83,6 +83,7 @@ export const injected = {
 	console: { log: simConsole.println },
 };
 
+
 /** Internal exection function 
  * @param {string} script user code to execute
  * @param {Lesson} lesson lesson to execute
@@ -151,27 +152,33 @@ export async function execInternal(script, lesson, langInfo) {
 		for (let id in PLUGINS) {
 			const plugin = PLUGINS[id];
 			if (plugin.isExpected(test)) {
-				const judge = plugin.judge(test, res[id]);
 				res[id] = plugin.extract(res);
-				console.log(id, "has", res[id]);
-				plugin.postRun(test, injected, res);
+				console.log("Result for",id,"is<", res[id],">");
+				// Note to self: pass whole result object to plugin, not just the current id's result...
+				const judge = plugin.judge(test, res); 
 				
+				const checked = check(judge);
 				
 				if (typeof(checked) === "boolean") {
 					res["matched"+id] = checked;
+					console.log(id, "Got matched:", checked);
 				} else if (typeof(checked) === "number") {
 					if (typeof(judge.distance) === "number") {
 						res["distance"+id] = checked;
 						const threshold = test["thresholdDistance"+id] || plugin.distanceThreshold
 						res["matched"+id] = judge.distance <= threshold
+						console.log(id, "Got distance:", checked);
 					} else if (typeof(judge.accuracy) === "number") {
 						res["accuracy"+id] = checked;
 						const threshold = test["thresholdAccuracy"+id] || plugin.accuracyThreshold
 						res["matched"+id] = judge.accuracy >= threshold
+						console.log(id, "Got accuracy:", checked);
 					}
-					// distanceMatched = (Math.abs(res["distance"+id]) > 0)
+				} else {
+					console.log("wtf Got judgement", judge);
 				}
 				
+				plugin.postRun(test, injected, res);
 			}
 			
 		}

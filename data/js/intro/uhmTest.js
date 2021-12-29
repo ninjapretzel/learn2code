@@ -1,4 +1,3 @@
-import { GLOBALS } from "../../../common.js";
 import { Lesson } from "../../../src/lesson.js";
 
 /** @type {Lesson} */
@@ -36,6 +35,6 @@ export default {
 			}
 		},	
 	],
-	TestCode: "hello();",
+	TestCode: "hello(args);",
 	AlwaysOpen: true,
 }

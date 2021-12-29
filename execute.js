@@ -94,7 +94,9 @@ export async function showLesson(l) {
 	rerenderTestCases();
 	for (let id in PLUGINS) {
 		const plugin = PLUGINS[id];
-		plugin.ready(l);
+		if (plugin.isExpected(l)) {
+			plugin.ready(l);
+		}
 	}
 }
 
