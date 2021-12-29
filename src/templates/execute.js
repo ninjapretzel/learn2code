@@ -28,8 +28,10 @@ class Execute extends Template {
 		return <div className="col s12 row rowfix">
 			<div className="col s12 row rowfix">
 				<div className="col s2"></div>
+				{/*
 				<button id="prev" className="col blue-grey s4 teensy btn bb waves-effect"> &lt;-- Prev</button>
 				<button id="next" className="col blue-grey s4 teensy btn bb waves-effect">Next --&gt; </button>
+				 */}
 				<div className="col s12">
 					<h5><span id="Category">{Category}</span> : <span id="Lesson">{Lesson}</span></h5>
 					<div id="LessonText">{LessonText}</div>	
