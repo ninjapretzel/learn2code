@@ -24,6 +24,7 @@ export default {
 			expectReturnValue: true,
 			expectedReturnValue: 5, 
 			expectDrawing: true,
+			thresholdAccuracyDrawing: 99,
 			expectedDrawing: function() {
 				const canvas = $("#backCanvas")[0];
 				const d = {};
@@ -33,6 +34,7 @@ export default {
 				
 				return window.extractPixels("#backCanvas");
 			}
+			
 		},	
 	],
 	TestCode: "hello(args);",

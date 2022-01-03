@@ -14,7 +14,7 @@ class Browse extends Template {
 					GLOBALS.showLesson(data.Categories[catName][GLOBALS.LANG][idx]);
 				}
 				lessons.push(<div id="" className="col s12 card blue-grey lighten-1">
-					<h5 onClick={loader}>{lesson.Content.Lesson}</h5>
+					<h5 onClick={loader}><a> {lesson.Content.Lesson} </a></h5>
 				</div>);
 			}
 			inner.push(<div className="col s12 card blue-grey">

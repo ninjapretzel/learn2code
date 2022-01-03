@@ -42,18 +42,21 @@ class TestResultCard extends Template {
 		for (let id in PLUGINS) {
 			const plugin = PLUGINS[id];
 			if (plugin.isExpected(test)) {
-				const judgement = plugin.judge(test, result);
+				checkMatch(plugin, test, result);
+				
+				// const checked = check(judge);
 				
 				const color = passFailClasses[passFail(run?result:null, "matched"+id)];
 				// console.log(id, "Color=",color,"judged", judgement);
 				if (test["expect"+id]) {
-					if (run && !judgement.matched) { 
+					if (run && !result["matched"+id]) { 
 						console.log("failed by plugin", id);
 						outColor = passFailClasses[2];
 					}
+					const judge = plugin.judge(test, result);
 					chips.push( 
 						<div className={"right chip material-icons lighten-2 "+color}>
-							{plugin.chip(test, result, judgement)}
+							{plugin.chip(test, result, judge)}
 						</div>
 					);
 				}
