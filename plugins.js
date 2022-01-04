@@ -218,18 +218,6 @@ class ConsoleOutputPlugin extends L2CPlugin {
 	get id() { return "ConsoleOutput"; }
 	extract(result) { return this.simConsole.buffer; }
 	
-	// judge(test, result) {
-	// 	if (!result) { return false; }
-	// 	if (test["expect"+this.id]) {
-	// 		return {
-	// 			expected: true,
-	// 			matched: this.check(test["expected"+this.id], result[this.id])
-	// 		}
-	// 	}
-	// 	return false;
-	// }
-	
-	
 	chip(test, result, judgement) { 
 		return judgement.expected ? "print" : null; 
 	}
