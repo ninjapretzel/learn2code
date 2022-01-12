@@ -61,6 +61,8 @@ function clearMarkers() {
 }
 
 
+/** Shows the given lesson object
+ * @param {Lesson} l Lesson object to show */
 export async function showLesson(l) {
 	if (l) { lesson = l }
 	
@@ -100,41 +102,49 @@ export async function showLesson(l) {
 	}
 }
 
-export function goToLesson(lessonID) {
-	if (lessonID) {
-			
+export function lessonFor(catName, id) {
+	catName = catName.toLowerCase();
+	const lowCats = {}
+	for (let key in Categories) { lowCats[key.toLowerCase()] = Categories[key]; }
+	const cat = lowCats[catName];
+	if (!cat) { throw new Error(`No Lesson Category named '${catName}'`); }
+	const lang = cat[GLOBALS.LANG];
+	if (!lang) { throw new Error(`No Language '${GLOBALS.LANG}' in category ${catName}`); }
+	let idx = -1;
+	if (typeof(id) === "string") {
+		id = id.toLowerCase();
+		for (let i = 0; i < lang.length; i++) {
+			if (lang[i].Content.Lesson.toLowerCase() === id) {
+				idx = i; 
+				break;
+			}
+		}
+	} else if (typeof(id) === "number") {
+		idx = id;
+	}
+	if (idx < 0 || idx > lang.length) { throw new Error(`No lesson with id ${id}`); }
+	return lang[idx];
+}
+
+export function goToLesson(cat, id) {
+	if (!id && cat.includes('.')) {
 		try {
-			const lowCats = {}
-			for (let key in Categories) { lowCats[key.toLowerCase()] = Categories[key]; }
 			//console.log("Attempting to load \""+lessonID+"\"");
-			const splits = lessonID.split(".");;
-			//console.log("splits=",splits);
+			const splits = cat.split(".");;
+			console.log("splits=",splits);
 			const catName = splits[0].toLowerCase(); // One browser goes lowercase for query params... ugh
 			const lessonName = splits[1].toLowerCase();
-			
-			const cat = lowCats[catName];
-			if (!cat) { console.log("No category", catName); throw "oops"; }
-			//console.log("got category", catName, "->", cat);
-			const lang = cat[GLOBALS.LANG];
-			if (!lang) { console.log("No language", GLOBALS.LANG); throw "oops"; }
-			//console.log("got language", GLOBALS.LANG, "->", lang);
-			let idx = -1;
-			for (let i = 0; i < lang.length; i++) {
-				if (lang[i].Content.Lesson.toLowerCase() === lessonName) {
-					idx = i;
-					break;
-				}
-				// if (lang[i].Content.Lesson.equalsIgnoreCase(lessonName)) { idx = i; break; }	
-			}
-			if (idx < 0) { console.log("No lesson", lessonName); throw "oops"; }
-			//console.log("got lesson", lessonName, "->", lang[idx]);
-			showLesson(lang[idx]);
+			console.log(catName, lessonName);
+			showLesson(lessonFor(catName, lessonName));
 		} catch (e) { 
 			console.error(e);
 			showBrowse();
 		}
 	} else {
-		showBrowse();
+		if (!cat) { showBrowse(); }
+		else {
+			showLesson(lessonFor(cat, id));
+		}
 	}	
 }
 GLOBALS.goToLesson = goToLesson;
