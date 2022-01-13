@@ -70,9 +70,13 @@ export async function onError(scriptEntry, error) {
 	idx = next;
 	let err = str.substring(idx);
 	let col = marker.indexOf("^");
-	if (col === -1) { col = ""; }
+	if (col === -1) {
+		err = line;
+	}
 	 // I have no idea why this needs to be adjusted by an additional 2...
 	num = Number(num) - preNewlines - 2;
+	
+	
 	
 	// console.log("Got line #", num+ "\nline=\""+ line + "\"\nmark=\""+ marker+ "\"\nerr ="+ err);
 	M.toast({html:`Script Error on line # ${num}.<br /> ${err}`, classes:"red" });
