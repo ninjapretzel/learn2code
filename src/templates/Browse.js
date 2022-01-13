@@ -15,11 +15,11 @@ class Browse extends Template {
 				const loader = ()=>{
 					GLOBALS.showLesson(data.Categories[catName][GLOBALS.LANG][idx]);
 				}
-				lessons.push(<div id="" className="col s12 card blue-grey lighten-1">
+				lessons.push(<div id="" className="col s12 card blue-grey darken-1">
 					<h5 onClick={loader}>{i}. {lesson.Content.Lesson} </h5>
 				</div>);
 			}
-			inner.push(<div className="col s12 card blue-grey">
+			inner.push(<div className="col s12 card blue-grey darken-2">
 				<h3>Category: {cat}</h3>
 				<div className="row">
 					{lessons}
