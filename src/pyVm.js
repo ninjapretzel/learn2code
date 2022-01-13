@@ -1,3 +1,4 @@
+import { GLOBALS, replaceAll } from "../common.js";
 import { VmInfo } from "./vm.js";
 
 /** @type {VmInfo} */
@@ -63,15 +64,24 @@ export async function onError(scriptEntry, error) {
 	idx = next;
 	next = str.indexOf("\n", idx) + 1;
 	let marker = str.substring(idx, next-1);
+	// Pyodide internally uses 4-wide tabs, and converts tabs to spaces...
+	// Code mirror uses actual tabs...
+	marker = replaceAll(marker, "    ", "\t"); 
 	idx = next;
 	let err = str.substring(idx);
 	let col = marker.indexOf("^");
 	if (col === -1) { col = ""; }
-	num = Number(num) - preNewlines;
+	 // I have no idea why this needs to be adjusted by an additional 2...
+	num = Number(num) - preNewlines - 2;
 	
-	console.log("Got line #", num, "\nline=\"", line, "\"\nmark=\"", marker, "\"\nerr =", err);
+	console.log("Got line #", num+ "\nline=\""+ line + "\"\nmark=\""+ marker+ "\"\nerr ="+ err);
 	M.toast({html:`Script Error on line # ${num}.<br /> ${err}`, classes:"red" });
+	let startMark = { line: num, col: 0 }
+	let endMark = { line: num+1, col: 0 }
 	
+	console.log("Marking from", startMark, "to", endMark);
+	GLOBALS.clearMarkers()
+	GLOBALS.markText(startMark, endMark, { css: "color: #faa;background: #a33" });
 	
 }
 

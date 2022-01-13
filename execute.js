@@ -54,12 +54,24 @@ function rerenderTestCases() {
 }
 
 let markers = [];
+let permMarkers = [];
 
 function clearMarkers() {
 	for (let mark of markers) { mark.clear(); }
-	markers = []	
+	markers = [];
+	GLOBALS.markers = markers;
+}
+function clearPermMarkers() {
+	for (let mark of permMarkers) { mark.clear(); }
+	permMarkers = [];
 }
 
+/** Globally accessible function that resets plugin-added CodeMirror text editor's markings */
+GLOBALS.clearMarkers = clearMarkers;
+
+GLOBALS.markText = function(start, end, options) {
+	markers.push(codeEditor.markText(start, end, options));
+}
 
 /** Shows the given lesson object
  * @param {Lesson} l Lesson object to show */
@@ -86,12 +98,13 @@ export async function showLesson(l) {
 	
 	await showExec();
 	clearMarkers();
+	clearPermMarkers();
 	codeEditor.setValue(codeToLoad);
 	if (lesson.Preamble) { 
-		codeEditor.markText(startMarker, endOfPreamble, { inclusiveLeft: true, readOnly: true});
+		permMarkers.push(codeEditor.markText(startMarker, endOfPreamble, { inclusiveLeft: true, readOnly: true}));
 	}
 	if (lesson.Postamble) {
-		codeEditor.markText(startOfPostamble, endMarker, { inclusiveRight: true, readOnly: true});
+		permMarkers.push(codeEditor.markText(startOfPostamble, endMarker, { inclusiveRight: true, readOnly: true}));
 	}
 	rerenderTestCases();
 	for (let id in PLUGINS) {
