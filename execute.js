@@ -208,6 +208,7 @@ function LoadCodeMirror() {
 				electricChars: false, // ??? No idea what that does. 
 				lineNumbers: true,
 			});
+			GLOBALS.codeEditor = codeEditor;
 			
 			codeEditor.on("change", function(editor,change) {
 				//console.log("editor=",editor);

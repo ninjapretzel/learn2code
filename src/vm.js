@@ -1,4 +1,5 @@
 /// File holding generic (language-agnostic) virtual machine functionality.
+import { GLOBALS } from "../common.js";
 import { Lesson, TestCase } from "./lesson.js";
 
 let delay = 1;
@@ -25,7 +26,7 @@ const INTERRUPTED = "INTERRUPTED";
 /** 
  * @callback errorHandlerFn
  * @param {CodeMirror} scriptEntry code editor object
- * @param {any[]} errors Errors from execution (dependent on language's vm)
+ * @param {any} error Error from execution (dependent on language's vm)
  * @return {any} nothing is expected, but side effect should be editor is highlighted to show errors to the student */
 
 /** Class holding information about a language's VM*/
@@ -41,7 +42,7 @@ export class VmInfo {
 	/** @type {argsFormatterFn} Function that processes args for the language */
 	argsFormatter = function(args) { return "const args = " + JSON.stringify(args); }
 	/** @type {errorHandlerFn} Function that processes errors for the language. */
-	onError = function(scriptEntry, errors) { }
+	onError = function(scriptEntry, error) { }
 }
 
 /** Class holding the results of execution of a single `TestCase` */
@@ -136,8 +137,10 @@ export async function execInternal(script, lesson, langInfo) {
 			if (e === INTERRUPTED) {
 				M.toast({html:`${e}.`, classes:"yellow black-text", displayLength: 1000});
 			} else {
-				M.toast({html:`Script Error. ${e}`, classes:"red" })
+				// M.toast({html:`Script Error. ${e}`, classes:"red" })
 				console.error("VM error: ", e);
+				langInfo.onError(GLOBALS.codeEditor, e);
+				
 			}
 		}
 		const end = new Date().getTime();
