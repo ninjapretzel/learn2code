@@ -127,6 +127,7 @@ export async function execInternal(script, lesson, langInfo) {
 		}
 		
 		let result = null;
+		GLOBALS.clearMarkers()
 		try {
 			runTask = langInfo.exec(code, injected);
 			await runTask;
