@@ -50,7 +50,7 @@ export async function extract() {
 export async function onError(scriptEntry, error) {
 	const str = error.toString();
 	const search = "File \"<exec>\", line ";
-	let idx = str.indexOf(search);
+	let idx = str.lastIndexOf(search);
 	console.log("pyvm.onError: index at", idx, "in", str);
 	idx += search.length;
 	let num = ""
