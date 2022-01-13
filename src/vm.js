@@ -137,7 +137,7 @@ export async function execInternal(script, lesson, langInfo) {
 				M.toast({html:`${e}.`, classes:"yellow black-text", displayLength: 1000});
 			} else {
 				M.toast({html:`Script Error. ${e}`, classes:"red" })
-				console.error("e");
+				console.error("VM error: ", e);
 			}
 		}
 		const end = new Date().getTime();
