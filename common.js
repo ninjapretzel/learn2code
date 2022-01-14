@@ -3,6 +3,41 @@ export const queryParams = urlParam();
 export const GLOBALS = {};
 window.GLOBALS = GLOBALS;
 
+/// https://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid
+export function uuidv4_1() {
+	return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+		(c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+	);
+}
+export function uuidv4_2() {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+		var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+		return v.toString(16);
+	});
+}
+export function uuidv4() {
+	if (crypto) {
+		if (crypto.randomUUID) { return crypto.randomUUID(); }
+		return uuidv4_1();	
+	}
+	return uuidv4_2();
+}
+
+GLOBALS.uuidv4 = uuidv4;
+
+
+
+
+export function getUserId() {
+	let id = localStorage.getItem("USER-ID");
+	if (id) { return id; }
+	id = uuidv4();
+	localStorage.setItem("USER-ID", id);
+	return id;	
+}
+
+
+
 export function expandCollapsible(open, index) {
 	try { $('.collapsible').collapsible( {accordion: false} ); } 
 	catch (e) { console.warn("failed to initialize collapsibles", e); return; }
