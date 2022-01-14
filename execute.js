@@ -113,6 +113,8 @@ export async function showLesson(l) {
 			plugin.ready(l);
 		}
 	}
+	
+	history.replaceState( {}, "", `?lang=${l.lang}&lesson=${l.id}` );
 }
 
 export function lessonFor(catName, id) {
@@ -232,6 +234,7 @@ function LoadCodeMirror() {
 				const evt = e.originalEvent
 				const key = evt.key;
 				const ctrl = evt.ctrlKey;
+				console.log(evt);
 				// TODO: Keybind system?
 				if (key === "Enter" && ctrl) { exec(); }
 			});
