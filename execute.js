@@ -209,6 +209,7 @@ function LoadCodeMirror() {
 	return new Promise( (resolve, reject)=>{
 	
 		$("#run").click(()=>{ exec(); });
+		$("#clearErrors").click(()=>{ GLOBALS.clearMarkers(); });
 		setTimeout( ()=>{ 
 			// Delay another 1 ms, 
 			// for some reason the TextArea isn't always ready in some browsers...
@@ -234,7 +235,6 @@ function LoadCodeMirror() {
 				const evt = e.originalEvent
 				const key = evt.key;
 				const ctrl = evt.ctrlKey;
-				console.log(evt);
 				// TODO: Keybind system?
 				if (key === "Enter" && ctrl) { exec(); }
 			});

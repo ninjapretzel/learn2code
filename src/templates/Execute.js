@@ -39,6 +39,7 @@ class Execute extends Template {
 			</div>
 			<div className="col s6 card large blue-grey darken-2">
 				<button id="run" className="teensy btn bb waves-effect right">Run</button>
+				<button id="clearErrors" className="teensy btn bb waves-effect right">Clear Errors</button>
 				<h5> Code Entry : </h5>
 				<div id="scriptEntry"></div>
 				<div className="row rowfix">
