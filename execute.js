@@ -41,9 +41,26 @@ async function loadLanguage() {
 }
 await loadLanguage(); // Preload language. Might be called again later.
 
+const CODE_PREFIX = "entry-"
+function getCode(id) { 
+	const key = CODE_PREFIX+LANG+"-"+id;
+	// console.log("reading key", key);
+	return localStorage.getItem(key);
+}
+function setCode(id, value) {
+	const key = CODE_PREFIX+LANG+"-"+id; 
+	// console.log("Got starting code ", value);
+	value = value.replace(lesson.Preamble, "");
+	// console.log("Replaced Preamble to ", value);
+	value = value.replace(new RegExp(lesson.Postamble+"$"), "");
+	// console.log("Replaced Postamble to ", value);
+	// console.log("Setting localstorage key", key, "to", value);
+	localStorage.setItem(key, value); 
+}
 
 export async function exec() {
 	let script = codeEditor.getValue();
+	setCode(lesson.id, script);
 	results = await vm.execInternal(script, lesson, langInfo);
 	rerenderTestCases();
 }
@@ -90,7 +107,10 @@ export async function showLesson(l) {
 	if (lesson.Preamble) { codeToLoad += lesson.Preamble; }
 	const endOfPreamble = measure(codeToLoad); 
 	
-	if (lesson.InitialCode) { codeToLoad += lesson.InitialCode; }
+	const storedCode = getCode(lesson.id);
+	if (storedCode) { codeToLoad += storedCode; }
+	else if (lesson.InitialCode) { codeToLoad += lesson.InitialCode; }
+	
 	const startOfPostamble = measure(codeToLoad);
 	if (lesson.Postamble) { codeToLoad += lesson.Postamble; }
 	const endMarker = measure(codeToLoad); 
