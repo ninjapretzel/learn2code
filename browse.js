@@ -36,6 +36,9 @@ async function loadAllLessons() {
 				if (prev[lang]) { prev[lang].next = result; }
 				result.prev = prev[lang];
 				result.ord = ord[lang];
+				result.id = result.Content.Category+"."+result.Content.Lesson;
+				result.lang = lang;
+				//console.log(`Setting id=${result.id} lang=${result.lang}`);
 				
 				// lazy initialization
 				if (!Categories[result.Content.Category]) {
